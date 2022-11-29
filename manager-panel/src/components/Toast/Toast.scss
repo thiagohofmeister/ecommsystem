@@ -1,0 +1,15 @@
+@import 'react-toastify/dist/ReactToastify.min.css';
+
+.Toastify__close-button {
+  opacity: 1;
+  align-self: center;
+}
+
+.Toastify__toast-body {
+  color: #000;
+}
+
+.Toastify__toast-icon {
+  margin-inline-end: 17px;
+  color: #44bc4f;
+}
