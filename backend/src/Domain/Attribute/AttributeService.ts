@@ -1,5 +1,4 @@
-import { IItemListModel } from 'ecommsystem-core'
-
+import { IItemListModel } from '../../Shared/Models/Interfaces/IItemListModel'
 import { AttributeValidator } from './AttributeValidator'
 import { AttributeCreateDto } from './Dto/AttributeCreateDto'
 import { AttributeGetListFilterDto } from './Dto/AttributeGetListFilterDto'
@@ -14,20 +13,13 @@ export class AttributeService {
     private readonly attributeValidator: AttributeValidator
   ) {}
 
-  public async create(
-    storeId: string,
-    data: AttributeCreateDto
-  ): Promise<Attribute> {
+  public async create(storeId: string, data: AttributeCreateDto): Promise<Attribute> {
     await this.attributeValidator.attributeCreatePayloadValidate(data)
 
     return this.save(storeId, data)
   }
 
-  public async update(
-    id: string,
-    storeId: string,
-    data: AttributeUpdateDto
-  ): Promise<Attribute> {
+  public async update(id: string, storeId: string, data: AttributeUpdateDto): Promise<Attribute> {
     await this.attributeValidator.attributeUpdatePayloadValidate(data)
 
     return this.save(storeId, data, await this.getOneById(id))
@@ -37,9 +29,7 @@ export class AttributeService {
     return this.attributeRepository.findOneByPrimaryColumn(id)
   }
 
-  public async list(
-    filter: AttributeGetListFilterDto
-  ): Promise<IItemListModel<Attribute>> {
+  public async list(filter: AttributeGetListFilterDto): Promise<IItemListModel<Attribute>> {
     return this.attributeRepository.findAll(filter)
   }
 
@@ -48,9 +38,7 @@ export class AttributeService {
     data: AttributeSaveDto,
     attribute?: Attribute
   ): Promise<Attribute> {
-    return this.attributeRepository.save(
-      await this.getAttributeToSave(storeId, data, attribute)
-    )
+    return this.attributeRepository.save(await this.getAttributeToSave(storeId, data, attribute))
   }
 
   private async getAttributeToSave(

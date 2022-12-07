@@ -1,11 +1,8 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
 import { Variation } from '../../Domain/Variation/Models/Variation'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 import { VariationDao } from '../Models/VariationDao'
 
-export class VariationDataMapper extends EntityDataMapperContract<
-  Variation,
-  VariationDao
-> {
+export class VariationDataMapper extends EntityDataMapperContract<Variation, VariationDao> {
   toDomainEntity(entity: VariationDao): Variation {
     return new Variation(
       entity.sku,

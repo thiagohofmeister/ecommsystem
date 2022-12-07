@@ -1,19 +1,13 @@
-import { ViewContract } from 'ecommsystem-core'
-
+import { ViewContract } from '../../../Shared/Views/Contracts/ViewContract'
 import { CategoryTree } from '../Models/CategoryTree'
 
-export class CategoryTreeView extends ViewContract<
-  CategoryTree,
-  CategoryTreeResponse
-> {
+export class CategoryTreeView extends ViewContract<CategoryTree, CategoryTreeResponse> {
   protected renderOne(entity: CategoryTree): CategoryTreeResponse {
     return {
       id: entity.getId(),
       label: entity.getLabel(),
       urn: entity.getUrn(),
-      children: entity.getChildren()
-        ? this.renderMany(entity.getChildren())
-        : null
+      children: entity.getChildren() ? this.renderMany(entity.getChildren()) : null
     }
   }
 }

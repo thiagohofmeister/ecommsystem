@@ -1,7 +1,9 @@
-import { BaseController, CoreRequest, ResponseTypeEnum } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
 import { Factory } from '../../Shared/Factories/Factory'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { StockView } from './Views/StockView'
 
 export class VariationController extends BaseController {
@@ -10,19 +12,11 @@ export class VariationController extends BaseController {
     this.putStocks = this.putStocks.bind(this)
   }
 
-  public async putStocks(
-    req: CoreRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async putStocks(req: CoreRequest, res: Response, next: NextFunction): Promise<void> {
     return this.responseHandler(
       res,
       next,
-      this.getFacade(req).updateStocks(
-        req.params.sku,
-        req.context.storeId,
-        req.body
-      ),
+      this.getFacade(req).updateStocks(req.params.sku, req.context.storeId, req.body),
       ResponseTypeEnum.OK,
       new StockView()
     )
@@ -33,8 +27,6 @@ export class VariationController extends BaseController {
   }
 
   protected getFacade(req: CoreRequest) {
-    return Factory.getInstance()
-      .buildFacadeFactory(req.context?.storeId)
-      .buildVariationFacade()
+    return Factory.getInstance().buildFacadeFactory(req.context?.storeId).buildVariationFacade()
   }
 }

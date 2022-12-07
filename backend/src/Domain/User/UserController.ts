@@ -1,7 +1,9 @@
-import { BaseController, CoreRequest, ResponseTypeEnum } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
 import { Factory } from '../../Shared/Factories/Factory'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { UserFacade } from './UserFacade'
 import { UserView } from './Views/UserView'
 

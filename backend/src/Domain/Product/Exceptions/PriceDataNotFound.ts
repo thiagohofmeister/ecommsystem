@@ -1,4 +1,4 @@
-import { DataNotFoundException } from 'ecommsystem-core'
+import { DataNotFoundException } from '../../../Shared/Models/Exceptions/DataNotFoundException'
 
 export class PriceDataNotFound extends DataNotFoundException {
   constructor() {

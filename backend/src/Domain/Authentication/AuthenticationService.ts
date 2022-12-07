@@ -1,6 +1,7 @@
-import { JWT, RedisCollection } from 'ecommsystem-core'
 import * as md5 from 'md5'
 
+import { RedisCollection } from '../../Shared/Models/RedisCollection'
+import { JWT } from '../../Shared/Modules/JWT'
 import { EndpointPermissionsService } from '../EndpointPermissions/EndpointPermissionsService'
 import { Store } from '../Store/Models/Store'
 import { UserRoleTypeEnum } from '../User/Enums/UserRoleTypeEnum'
@@ -48,7 +49,10 @@ export class AuthenticationService {
     const userPermissions = await this.getUserPermissions(user, store, roleType)
 
     await this.authenticationRepository.create(
-      new RedisCollection(`${user.getId()}:${roleType}:${md5(JSON.stringify(jwtTokenData))}`, userPermissions)
+      new RedisCollection(
+        `${user.getId()}:${roleType}:${md5(JSON.stringify(jwtTokenData))}`,
+        userPermissions
+      )
     )
 
     return new Authentication(token)
@@ -60,6 +64,8 @@ export class AuthenticationService {
       return []
     }
 
-    return (await this.endpointPermissionsService.get()).find(ep => ep.getRoleType() === roleType).getPermissions()
+    return (await this.endpointPermissionsService.get())
+      .find(ep => ep.getRoleType() === roleType)
+      .getPermissions()
   }
 }

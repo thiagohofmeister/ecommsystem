@@ -1,7 +1,7 @@
-import { JoiSchemaValidatorContract } from 'ecommsystem-core'
-import { Schema } from 'joi'
 import * as Joi from 'joi'
+import { Schema } from 'joi'
 
+import { JoiSchemaValidatorContract } from '../../Shared/Validators/JoiSchemaValidatorContract'
 import { VariationSavePricesDto } from './Dto/VariationSaveStocksDto'
 
 export class VariationValidator extends JoiSchemaValidatorContract {
@@ -24,12 +24,7 @@ export class VariationValidator extends JoiSchemaValidatorContract {
       .min(1)
   }
 
-  public async variationSaveStocksPayloadValidate(
-    payload: VariationSavePricesDto[]
-  ) {
-    return this.validateBySchema<VariationSavePricesDto[]>(
-      payload,
-      this.variationSavePricesSchema
-    )
+  public async variationSaveStocksPayloadValidate(payload: VariationSavePricesDto[]) {
+    return this.validateBySchema<VariationSavePricesDto[]>(payload, this.variationSavePricesSchema)
   }
 }

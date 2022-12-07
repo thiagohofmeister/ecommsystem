@@ -1,4 +1,3 @@
-import { JWT, TransactionalService } from 'ecommsystem-core'
 import { EntityManager } from 'typeorm'
 
 import { AttributeService } from '../../Domain/Attribute/AttributeService'
@@ -21,11 +20,16 @@ import { VariationService } from '../../Domain/Variation/VariationService'
 import { VariationValidator } from '../../Domain/Variation/VariationValidator'
 import { WarehouseService } from '../../Domain/Warehouse/WarehouseService'
 import { WarehouseValidator } from '../../Domain/Warehouse/WarehouseValidator'
+import { JWT } from '../Modules/JWT'
+import { TransactionalService } from '../Services/TransactionalService'
 import { QueueFactory } from './QueueFactory'
 import { RepositoryFactory } from './RepositoryFactory'
 
 export class ServiceFactory {
-  constructor(private readonly repositoryFactory: RepositoryFactory, private readonly queueFactory: QueueFactory) {}
+  constructor(
+    private readonly repositoryFactory: RepositoryFactory,
+    private readonly queueFactory: QueueFactory
+  ) {}
 
   public buildProductService(manager?: EntityManager) {
     return new ProductService(
@@ -41,15 +45,24 @@ export class ServiceFactory {
   }
 
   public buildBrandService(manager?: EntityManager) {
-    return new BrandService(this.repositoryFactory.buildBrandRepository(manager), new BrandValidator())
+    return new BrandService(
+      this.repositoryFactory.buildBrandRepository(manager),
+      new BrandValidator()
+    )
   }
 
   public buildWarehouseService(manager?: EntityManager) {
-    return new WarehouseService(this.repositoryFactory.buildWarehouseRepository(manager), new WarehouseValidator())
+    return new WarehouseService(
+      this.repositoryFactory.buildWarehouseRepository(manager),
+      new WarehouseValidator()
+    )
   }
 
   public buildAttributeService(manager?: EntityManager) {
-    return new AttributeService(this.repositoryFactory.buildAttributeRepository(manager), new AttributeValidator())
+    return new AttributeService(
+      this.repositoryFactory.buildAttributeRepository(manager),
+      new AttributeValidator()
+    )
   }
 
   public buildCategoryService(manager?: EntityManager) {
@@ -86,7 +99,11 @@ export class ServiceFactory {
   }
 
   public buildRegisterService(manager?: EntityManager) {
-    return new RegisterService(this.buildUserService(manager), this.buildStoreService(manager), new RegisterValidator())
+    return new RegisterService(
+      this.buildUserService(manager),
+      this.buildStoreService(manager),
+      new RegisterValidator()
+    )
   }
 
   public buildUserService(manager?: EntityManager) {
@@ -94,7 +111,10 @@ export class ServiceFactory {
   }
 
   public buildStoreService(manager?: EntityManager) {
-    return new StoreService(this.repositoryFactory.buildStoreRepository(manager), new StoreValidator())
+    return new StoreService(
+      this.repositoryFactory.buildStoreRepository(manager),
+      new StoreValidator()
+    )
   }
 
   public buildTransactionalService() {

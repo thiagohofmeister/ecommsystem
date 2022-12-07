@@ -1,5 +1,4 @@
-import { ViewContract } from 'ecommsystem-core'
-
+import { ViewContract } from '../../../Shared/Views/Contracts/ViewContract'
 import { MeasureUnitEnum } from '../../Variation/Enums/MeasureUnitEnum'
 import { WeightUnitEnum } from '../../Variation/Enums/WeightUnitEnum'
 import { ProductVariationTemplate } from '../Interfaces/ProductVariationTemplate'

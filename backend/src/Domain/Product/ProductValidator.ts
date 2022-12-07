@@ -1,10 +1,8 @@
-import {
-  InvalidDataException,
-  JoiSchemaValidatorContract
-} from 'ecommsystem-core'
-import { Schema } from 'joi'
 import * as Joi from 'joi'
+import { Schema } from 'joi'
+import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 
+import { JoiSchemaValidatorContract } from '../../Shared/Validators/JoiSchemaValidatorContract'
 import { VariationSaveDto } from '../Variation/Dto/VariationSaveDto'
 import { MeasureUnitEnum } from '../Variation/Enums/MeasureUnitEnum'
 import { WeightUnitEnum } from '../Variation/Enums/WeightUnitEnum'
@@ -195,38 +193,24 @@ export class ProductValidator extends JoiSchemaValidatorContract {
   }
 
   public async productCreatePayloadValidate(payload: ProductCreateDto) {
-    return this.validateBySchema<ProductCreateDto>(
-      payload,
-      this.productCreateSchema
-    )
+    return this.validateBySchema<ProductCreateDto>(payload, this.productCreateSchema)
   }
 
   public async productUpdatePayloadValidate(payload: ProductUpdateDto) {
-    return this.validateBySchema<ProductUpdateDto>(
-      payload,
-      this.productUpdateSchema
-    )
+    return this.validateBySchema<ProductUpdateDto>(payload, this.productUpdateSchema)
   }
 
   public async productSaveVariationPayloadValidate(payload: VariationSaveDto) {
-    return this.validateBySchema<VariationSaveDto>(
-      payload,
-      this.productSaveVariationSchema
-    )
+    return this.validateBySchema<VariationSaveDto>(payload, this.productSaveVariationSchema)
   }
 
-  public async productSavePricesPayloadValidate(
-    payload: ProductSavePriceDto[]
-  ) {
+  public async productSavePricesPayloadValidate(payload: ProductSavePriceDto[]) {
     if (payload.length > 1 && !payload.every(item => !!item.sku)) {
       throw new InvalidDataException(
         'When more than one item is sent, they all need to have a SKU.'
       )
     }
 
-    return this.validateBySchema<ProductSavePriceDto[]>(
-      payload,
-      this.productSavePricesSchema
-    )
+    return this.validateBySchema<ProductSavePriceDto[]>(payload, this.productSavePricesSchema)
   }
 }

@@ -1,7 +1,6 @@
-import { TypeOrmMysqlRepositoryContract } from 'ecommsystem-core'
-
 import { Store } from '../../Domain/Store/Models/Store'
 import { StoreRepository } from '../../Domain/Store/Repositories/StoreRepository'
+import { TypeOrmMysqlRepositoryContract } from '../../Shared/Repositories/Contracts/TypeOrmMysqlRepositoryContract'
 import { StoreDao } from '../Models/StoreDao'
 
 export class StoreRepositoryImpl

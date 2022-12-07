@@ -1,11 +1,9 @@
-import {
-  IFilterDefault,
-  TypeOrmMysqlRepositoryContract
-} from 'ecommsystem-core'
 import { SelectQueryBuilder } from 'typeorm'
 
 import { Product } from '../../Domain/Product/Models/Product'
 import { ProductRepository } from '../../Domain/Product/Repositories/ProductRepository'
+import { IFilterDefault } from '../../Shared/Models/Interfaces/IFilterDefault'
+import { TypeOrmMysqlRepositoryContract } from '../../Shared/Repositories/Contracts/TypeOrmMysqlRepositoryContract'
 import { ProductDao } from '../Models/ProductDao'
 
 export class ProductRepositoryImpl
@@ -23,10 +21,7 @@ export class ProductRepositoryImpl
       .leftJoinAndSelect('stocks.warehouse', 'warehouse')
       .leftJoinAndSelect('ProductDao.brand', 'brand')
       .leftJoinAndSelect('ProductDao.images', 'images')
-      .leftJoinAndSelect(
-        'variations.variationAttributes',
-        'variationAttributes'
-      )
+      .leftJoinAndSelect('variations.variationAttributes', 'variationAttributes')
       .leftJoinAndSelect('variationAttributes.attribute', 'attribute')
       .leftJoinAndSelect('variationAttributes.variation', 'variation')
   }
@@ -43,10 +38,7 @@ export class ProductRepositoryImpl
       .leftJoinAndSelect('stocks.warehouse', 'warehouse')
       .leftJoinAndSelect('ProductDao.brand', 'brand')
       .leftJoinAndSelect('ProductDao.images', 'images')
-      .leftJoinAndSelect(
-        'variations.variationAttributes',
-        'variationAttributes'
-      )
+      .leftJoinAndSelect('variations.variationAttributes', 'variationAttributes')
       .leftJoinAndSelect('variationAttributes.attribute', 'attribute')
       .leftJoinAndSelect('variationAttributes.variation', 'variation')
   }

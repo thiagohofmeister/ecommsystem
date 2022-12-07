@@ -1,11 +1,7 @@
-import { ViewContract } from 'ecommsystem-core'
-
+import { ViewContract } from '../../../Shared/Views/Contracts/ViewContract'
 import { Authentication } from '../Models/Authentication'
 
-export class AuthenticationView extends ViewContract<
-  Authentication,
-  AuthenticationResponse
-> {
+export class AuthenticationView extends ViewContract<Authentication, AuthenticationResponse> {
   protected renderOne(entity: Authentication): AuthenticationResponse {
     return {
       authToken: entity.getAuthToken()

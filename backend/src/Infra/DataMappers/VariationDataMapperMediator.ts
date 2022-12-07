@@ -1,5 +1,5 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
 import { Variation } from '../../Domain/Variation/Models/Variation'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 import { VariationDao } from '../Models/VariationDao'
 import { PriceDataMapperMediator } from './PriceDataMapperMediator'
 import { ProductDataMapper } from './ProductDataMapper'
@@ -7,10 +7,7 @@ import { StockDataMapperMediator } from './StockDataMapperMediator'
 import { VariationAttributeDataMapperMediator } from './VariationAttributeDataMapperMediator'
 import { VariationDataMapper } from './VariationDataMapper'
 
-export class VariationDataMapperMediator extends EntityDataMapperContract<
-  Variation,
-  VariationDao
-> {
+export class VariationDataMapperMediator extends EntityDataMapperContract<Variation, VariationDao> {
   constructor(
     private readonly variationDataMapper: VariationDataMapper,
     private readonly productDataMapper: ProductDataMapper,
@@ -25,17 +22,13 @@ export class VariationDataMapperMediator extends EntityDataMapperContract<
     const variation = this.variationDataMapper.toDomainEntity(entity)
 
     if (entity.product) {
-      variation.setProduct(
-        this.productDataMapper.toDomainEntity(entity.product)
-      )
+      variation.setProduct(this.productDataMapper.toDomainEntity(entity.product))
     }
 
     if (entity.variationAttributes) {
       variation.removeAttributes([])
       entity.variationAttributes.forEach(varAttr => {
-        variation.addAttribute(
-          this.variationAttributeDataMapperMediator.toDomainEntity(varAttr)
-        )
+        variation.addAttribute(this.variationAttributeDataMapperMediator.toDomainEntity(varAttr))
       })
     }
 
@@ -60,28 +53,21 @@ export class VariationDataMapperMediator extends EntityDataMapperContract<
     const variation = this.variationDataMapper.toDaoEntity(domain)
 
     if (domain.getProduct()) {
-      variation.product = this.productDataMapper.toDaoEntity(
-        domain.getProduct()
-      )
+      variation.product = this.productDataMapper.toDaoEntity(domain.getProduct())
     }
 
     if (domain.getAttributes()) {
-      variation.variationAttributes =
-        this.variationAttributeDataMapperMediator.toDaoEntityMany(
-          domain.getAttributes()
-        )
+      variation.variationAttributes = this.variationAttributeDataMapperMediator.toDaoEntityMany(
+        domain.getAttributes()
+      )
     }
 
     if (domain.getStocks()) {
-      variation.stocks = this.stockDataMapperMediator.toDaoEntityMany(
-        domain.getStocks()
-      )
+      variation.stocks = this.stockDataMapperMediator.toDaoEntityMany(domain.getStocks())
     }
 
     if (domain.getPrices()) {
-      variation.prices = this.priceDataMapperMediator.toDaoEntityMany(
-        domain.getPrices()
-      )
+      variation.prices = this.priceDataMapperMediator.toDaoEntityMany(domain.getPrices())
     }
 
     return variation

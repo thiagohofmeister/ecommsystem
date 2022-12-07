@@ -1,3 +1,3 @@
-import { IFilterDefault } from 'ecommsystem-core'
+import { IFilterDefault } from '../../../Shared/Models/Interfaces/IFilterDefault'
 
 export interface AttributeGetListFilterDto extends IFilterDefault {}

@@ -1,12 +1,10 @@
-import {
-  BaseController,
-  CoreRequest,
-  ResponseTypeEnum,
-  UnauthorizedException
-} from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
-import { Factory } from '../../Shared/Factories/Factory'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
+import { Factory } from '../../Shared/Factories/Factory'
+import { UnauthorizedException } from '../../Shared/Models/Exceptions/UnauthorizedException'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { AuthenticationView } from './Views/AuthenticationView'
 
 export class AuthenticationController extends BaseController {
@@ -16,16 +14,13 @@ export class AuthenticationController extends BaseController {
   }
 
   post(req: CoreRequest, res: Response, next: NextFunction) {
-    const [tokenType, tokenBase64] =
-      req.header('authorization')?.split(' ') || []
+    const [tokenType, tokenBase64] = req.header('authorization')?.split(' ') || []
 
     if (tokenType !== 'Basic') {
       next(new UnauthorizedException())
     }
 
-    const [login, password] = Buffer.from(tokenBase64, 'base64')
-      .toString()
-      .split(':')
+    const [login, password] = Buffer.from(tokenBase64, 'base64').toString().split(':')
 
     if (!login || !password) {
       next(new UnauthorizedException())

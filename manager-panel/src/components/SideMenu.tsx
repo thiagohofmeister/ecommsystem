@@ -73,10 +73,6 @@ const SideMenu = () => {
   //   }
   // }, [sideMenuOpen, classes, sideMenuRef])
 
-  const renderMenu = useCallback(() => {
-    return menus.map(menu => renderMenuItem(menu))
-  }, [menus, classes])
-
   const renderMenuItem = useCallback(
     (menu: Menu) => {
       if (menu.route) {
@@ -99,6 +95,10 @@ const SideMenu = () => {
     },
     [classes]
   )
+
+  const renderMenu = useCallback(() => {
+    return menus.map(menu => renderMenuItem(menu))
+  }, [renderMenuItem])
 
   return (
     <div

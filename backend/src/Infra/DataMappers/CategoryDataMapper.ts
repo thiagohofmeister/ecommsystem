@@ -1,11 +1,8 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
-import { CategoryDao } from '../Models/CategoryDao'
 import { Category } from '../../Domain/Category/Models/Category'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
+import { CategoryDao } from '../Models/CategoryDao'
 
-export class CategoryDataMapper extends EntityDataMapperContract<
-  Category,
-  CategoryDao
-> {
+export class CategoryDataMapper extends EntityDataMapperContract<Category, CategoryDao> {
   toDomainEntity(entity: CategoryDao): Category {
     return new Category(
       entity.storeId,

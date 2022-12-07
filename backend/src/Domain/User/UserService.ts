@@ -1,5 +1,5 @@
-import { DataNotFoundException, UnauthorizedException } from 'ecommsystem-core'
-
+import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
+import { UnauthorizedException } from '../../Shared/Models/Exceptions/UnauthorizedException'
 import { AuthenticationCreateDto } from '../Authentication/Dto/AuthenticationCreateDto'
 import { UserCreateDto } from './Dto/UserCreateDto'
 import { User } from './Models/User'

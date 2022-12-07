@@ -1,9 +1,6 @@
-import {
-  DataNotFoundException,
-  IItemListModel,
-  InvalidDataException
-} from 'ecommsystem-core'
-
+import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
+import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
+import { IItemListModel } from '../../Shared/Models/Interfaces/IItemListModel'
 import { WarehouseCreateDto } from './Dto/WarehouseCreateDto'
 import { WarehouseGetListFilterDto } from './Dto/WarehouseGetListFilterDto'
 import { WarehouseSaveDto } from './Dto/WarehouseSaveDto'
@@ -20,25 +17,15 @@ export class WarehouseService {
     private readonly warehouseValidator: WarehouseValidator
   ) {}
 
-  public async create(
-    storeId: string,
-    data: WarehouseCreateDto
-  ): Promise<Warehouse> {
-    await this.validateWarehouseAlreadyExists(
-      data.address.zipCode,
-      data.address.number
-    )
+  public async create(storeId: string, data: WarehouseCreateDto): Promise<Warehouse> {
+    await this.validateWarehouseAlreadyExists(data.address.zipCode, data.address.number)
 
     await this.warehouseValidator.warehouseCreatePayloadValidate(data)
 
     return this.save(storeId, data)
   }
 
-  public async update(
-    id: string,
-    storeId: string,
-    data: WarehouseUpdateDto
-  ): Promise<Warehouse> {
+  public async update(id: string, storeId: string, data: WarehouseUpdateDto): Promise<Warehouse> {
     await this.warehouseValidator.warehouseUpdatePayloadValidate(data)
 
     return this.save(storeId, data, await this.getOneById(id))
@@ -48,10 +35,7 @@ export class WarehouseService {
     return this.warehouseRepository.findOneByPrimaryColumn(id)
   }
 
-  public async savePriorities(
-    storeId: string,
-    data: WarehouseSavePriorityDto[]
-  ) {
+  public async savePriorities(storeId: string, data: WarehouseSavePriorityDto[]) {
     await this.warehouseValidator.warehouseSavePriorityPayloadValidate(data)
 
     const warehousesIds = await this.getWarehousesIds()
@@ -94,9 +78,7 @@ export class WarehouseService {
     )
   }
 
-  public async list(
-    filter: WarehouseGetListFilterDto
-  ): Promise<IItemListModel<Warehouse>> {
+  public async list(filter: WarehouseGetListFilterDto): Promise<IItemListModel<Warehouse>> {
     return this.warehouseRepository.findAll(filter)
   }
 
@@ -105,11 +87,7 @@ export class WarehouseService {
     data: WarehouseSaveDto,
     warehouse?: Warehouse
   ): Promise<Warehouse> {
-    const warehouseToSave = await this.getWarehouseToSave(
-      storeId,
-      data,
-      warehouse
-    )
+    const warehouseToSave = await this.getWarehouseToSave(storeId, data, warehouse)
 
     return await this.warehouseRepository.save(warehouseToSave)
   }
@@ -194,10 +172,7 @@ export class WarehouseService {
     return warehouse
   }
 
-  private async validateWarehouseAlreadyExists(
-    zipCode: string,
-    number: string
-  ) {
+  private async validateWarehouseAlreadyExists(zipCode: string, number: string) {
     let exists = false
 
     try {

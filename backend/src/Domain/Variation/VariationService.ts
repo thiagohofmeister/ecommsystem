@@ -1,6 +1,6 @@
-import { InvalidDataException } from 'ecommsystem-core'
 import { In, Not } from 'typeorm'
 
+import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { AttributeRepository } from '../Attribute/Repositories/AttributeRepository'
 import { Product } from '../Product/Models/Product'
 import { WarehouseRepository } from '../Warehouse/Repositories/WarehouseRepository'
@@ -24,11 +24,7 @@ export class VariationService {
     private readonly attributeRepository: AttributeRepository
   ) {}
 
-  public async delete(
-    productId: string,
-    storeId: string,
-    sku: string | string[]
-  ) {
+  public async delete(productId: string, storeId: string, sku: string | string[]) {
     if (typeof sku === 'string') {
       return this.variationRepository.delete({
         sku,
@@ -42,11 +38,7 @@ export class VariationService {
     })
   }
 
-  private async deleteUnusedAttributes(
-    sku: string,
-    storeId: string,
-    idsToKeep: string | string[]
-  ) {
+  private async deleteUnusedAttributes(sku: string, storeId: string, idsToKeep: string | string[]) {
     if (typeof idsToKeep === 'string') {
       idsToKeep = [idsToKeep]
     }
@@ -79,9 +71,7 @@ export class VariationService {
           stockDto.quantity,
           storeId,
           variation,
-          warehouses.find(
-            warehouse => warehouse.getId() === stockDto.warehouse.id
-          )
+          warehouses.find(warehouse => warehouse.getId() === stockDto.warehouse.id)
         )
 
         return this.stockRepository.save(stock, false)
@@ -123,12 +113,7 @@ export class VariationService {
       throw new Error('Method not implemented.')
     }
 
-    const variationToSave = await this.getVariation(
-      variation,
-      product,
-      sku,
-      data
-    )
+    const variationToSave = await this.getVariation(variation, product, sku, data)
 
     await this.fillAttributes(variationToSave, data.attributes, variationIndex)
 
@@ -144,11 +129,7 @@ export class VariationService {
 
     variation.removeAttributes(attrIdsDto)
 
-    await this.deleteUnusedAttributes(
-      variation.getSku(),
-      variation.getStoreId(),
-      attrIdsDto
-    )
+    await this.deleteUnusedAttributes(variation.getSku(), variation.getStoreId(), attrIdsDto)
 
     if (!attrIdsDto.length) {
       return
@@ -159,9 +140,7 @@ export class VariationService {
     const invalidDataException = new InvalidDataException('Invalid data.')
 
     attributesDto.forEach((attrDto, index) => {
-      const attr = attributes.find(
-        attr => attr.getId() === attrDto.attribute.id
-      )
+      const attr = attributes.find(attr => attr.getId() === attrDto.attribute.id)
 
       if (!attr) {
         invalidDataException.addReason({
@@ -189,12 +168,7 @@ export class VariationService {
       }
 
       variation.addAttribute(
-        new VariationAttribute(
-          variation.getStoreId(),
-          attrDto.value,
-          variation,
-          attr
-        )
+        new VariationAttribute(variation.getStoreId(), attrDto.value, variation, attr)
       )
     })
 

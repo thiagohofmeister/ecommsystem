@@ -1,7 +1,7 @@
-import { JoiSchemaValidatorContract } from 'ecommsystem-core'
-import { Schema } from 'joi'
 import * as Joi from 'joi'
+import { Schema } from 'joi'
 
+import { JoiSchemaValidatorContract } from '../../Shared/Validators/JoiSchemaValidatorContract'
 import { AttributeCreateDto } from './Dto/AttributeCreateDto'
 import { AttributeUpdateDto } from './Dto/AttributeUpdateDto'
 
@@ -24,16 +24,10 @@ export class AttributeValidator extends JoiSchemaValidatorContract {
   }
 
   public async attributeCreatePayloadValidate(payload: AttributeCreateDto) {
-    return this.validateBySchema<AttributeCreateDto>(
-      payload,
-      this.attributeCreateSchema
-    )
+    return this.validateBySchema<AttributeCreateDto>(payload, this.attributeCreateSchema)
   }
 
   public async attributeUpdatePayloadValidate(payload: AttributeUpdateDto) {
-    return this.validateBySchema<AttributeUpdateDto>(
-      payload,
-      this.attributeUpdateSchema
-    )
+    return this.validateBySchema<AttributeUpdateDto>(payload, this.attributeUpdateSchema)
   }
 }

@@ -1,11 +1,8 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
-import { WarehouseDao } from '../Models/WarehouseDao'
 import { Warehouse } from '../../Domain/Warehouse/Models/Warehouse'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
+import { WarehouseDao } from '../Models/WarehouseDao'
 
-export class WarehouseDataMapper extends EntityDataMapperContract<
-  Warehouse,
-  WarehouseDao
-> {
+export class WarehouseDataMapper extends EntityDataMapperContract<Warehouse, WarehouseDao> {
   toDomainEntity(entity: WarehouseDao): Warehouse {
     return new Warehouse(
       entity.storeId,

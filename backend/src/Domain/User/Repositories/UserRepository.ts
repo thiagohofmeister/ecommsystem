@@ -1,5 +1,4 @@
-import { IRepository } from 'ecommsystem-core'
-
+import { IRepository } from '../../../Shared/Models/Interfaces/IRepository'
 import { User } from '../Models/User'
 
 export interface UserRepository extends IRepository<User> {

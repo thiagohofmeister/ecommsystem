@@ -1,5 +1,5 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
 import { VariationAttribute } from '../../Domain/Variation/Models/VariationAttribute'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 import { VariationAttributeDao } from '../Models/VariationAttributeDao'
 
 export class VariationAttributeDataMapper extends EntityDataMapperContract<

@@ -1,7 +1,9 @@
-import { BaseController, CoreRequest, ResponseTypeEnum } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
 import { Factory } from '../../Shared/Factories/Factory'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { EndpointPermissionsView } from './Views/EndpointPermissionsView'
 
 export class EndpointPermissionsController extends BaseController {
@@ -11,12 +13,7 @@ export class EndpointPermissionsController extends BaseController {
   }
 
   public async get(req: CoreRequest, res: Response, next: NextFunction) {
-    return this.responseHandler(
-      res,
-      next,
-      this.getFacade(req).get(),
-      ResponseTypeEnum.OK
-    )
+    return this.responseHandler(res, next, this.getFacade(req).get(), ResponseTypeEnum.OK)
   }
 
   protected getView() {

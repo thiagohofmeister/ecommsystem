@@ -1,14 +1,10 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
-
 import { Store } from '../../Domain/Store/Models/Store'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 import { StoreDao } from '../Models/StoreDao'
 import { StoreDataMapper } from './StoreDataMapper'
 import { UserDataMapper } from './UserDataMapper'
 
-export class StoreDataMapperMediator extends EntityDataMapperContract<
-  Store,
-  StoreDao
-> {
+export class StoreDataMapperMediator extends EntityDataMapperContract<Store, StoreDao> {
   constructor(
     private readonly storeDataMapper: StoreDataMapper,
     private readonly userDataMapper: UserDataMapper

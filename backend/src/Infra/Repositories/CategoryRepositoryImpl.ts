@@ -1,8 +1,8 @@
-import { TypeOrmMysqlRepositoryContract } from 'ecommsystem-core'
 import { IsNull } from 'typeorm'
 
 import { Category } from '../../Domain/Category/Models/Category'
 import { CategoryRepository } from '../../Domain/Category/Repositories/CategoryRepository'
+import { TypeOrmMysqlRepositoryContract } from '../../Shared/Repositories/Contracts/TypeOrmMysqlRepositoryContract'
 import { CategoryDao } from '../Models/CategoryDao'
 
 export class CategoryRepositoryImpl

@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
-import { Consumer } from 'ecommsystem-core'
 
+import { Consumer } from '../Shared/Events/Consumer'
 import { Factory } from '../Shared/Factories/Factory'
 import { QueueFactory } from '../Shared/Factories/QueueFactory'
 import { MySQL } from './Database/MySQL'

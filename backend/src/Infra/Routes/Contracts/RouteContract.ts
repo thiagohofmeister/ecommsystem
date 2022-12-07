@@ -1,6 +1,6 @@
-import { BaseController } from 'ecommsystem-core'
 import { kebabCase } from 'lodash'
 
+import { BaseController } from '../../../Shared/Controllers/BaseController'
 import { RouteDto } from '../../Dto/RouteDto'
 
 export abstract class RouteContract<T extends BaseController> {
@@ -15,9 +15,7 @@ export abstract class RouteContract<T extends BaseController> {
   }
 
   protected getFullEndpoint(route: string = '') {
-    return `/${[this.basePath, route]
-      .filter(r => !!r.trim())
-      .join('/')}`.replace(/\/\//, '/')
+    return `/${[this.basePath, route].filter(r => !!r.trim()).join('/')}`.replace(/\/\//, '/')
   }
 
   abstract getRoutes(): RouteDto[]

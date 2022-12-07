@@ -1,7 +1,7 @@
-import { JoiSchemaValidatorContract } from 'ecommsystem-core'
-import { Schema } from 'joi'
 import * as Joi from 'joi'
+import { Schema } from 'joi'
 
+import { JoiSchemaValidatorContract } from '../../Shared/Validators/JoiSchemaValidatorContract'
 import { RegisterCreateDto } from './Dto/RegisterCreateDto'
 
 export class RegisterValidator extends JoiSchemaValidatorContract {
@@ -17,9 +17,6 @@ export class RegisterValidator extends JoiSchemaValidatorContract {
   }
 
   public async registerCreatePayloadValidate(payload: RegisterCreateDto) {
-    return this.validateBySchema<RegisterCreateDto>(
-      payload,
-      this.registerCreateSchema
-    )
+    return this.validateBySchema<RegisterCreateDto>(payload, this.registerCreateSchema)
   }
 }

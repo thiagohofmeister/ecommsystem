@@ -1,5 +1,5 @@
-import { IViewResponse, ViewContract } from 'ecommsystem-core'
-
+import { ViewContract } from '../../../Shared/Views/Contracts/ViewContract'
+import { IViewResponse } from '../../../Shared/Views/Interfaces/IViewResponse'
 import { Brand } from '../Models/Brand'
 
 export class BrandView extends ViewContract<Brand> {

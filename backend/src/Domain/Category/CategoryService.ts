@@ -1,11 +1,9 @@
-import {
-  DataNotFoundException,
-  InvalidDataException,
-  RedisCollection
-} from 'ecommsystem-core'
 import { kebabCase } from 'lodash'
 
 import { CategoryQueue } from '../../Infra/Queues/CategoryQueue'
+import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
+import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
+import { RedisCollection } from '../../Shared/Models/RedisCollection'
 import { CategoryValidator } from './CategoryValidator'
 import { CategoryCreateDto } from './Dto/CategoryCreateDto'
 import { CategorySaveDto } from './Dto/CategorySaveDto'
@@ -26,20 +24,13 @@ export class CategoryService {
     private readonly categoryTreeCacheRepository: CategoryTreeCacheRepository
   ) {}
 
-  public async create(
-    storeId: string,
-    data: CategoryCreateDto
-  ): Promise<Category> {
+  public async create(storeId: string, data: CategoryCreateDto): Promise<Category> {
     await this.categoryValidator.categoryCreatePayloadValidate(data)
 
     return this.save(storeId, data)
   }
 
-  public async update(
-    id: string,
-    storeId: string,
-    data: CategoryCreateDto
-  ): Promise<Category> {
+  public async update(id: string, storeId: string, data: CategoryCreateDto): Promise<Category> {
     await this.categoryValidator.categoryCreatePayloadValidate(data)
 
     return this.save(storeId, data, await this.getOneById(id))
@@ -63,9 +54,7 @@ export class CategoryService {
 
   public async getCache() {
     try {
-      return await this.categoryTreeCacheRepository.findOneByPrimaryColumn(
-        this.CACHE_NAME
-      )
+      return await this.categoryTreeCacheRepository.findOneByPrimaryColumn(this.CACHE_NAME)
     } catch (e) {
       return null
     }
@@ -81,9 +70,7 @@ export class CategoryService {
     category: CategoryTree = null,
     categoriesTree: CategoryTree[] = []
   ): Promise<CategoryTree[]> {
-    const categories = await this.categoryRepository.findAllByParentId(
-      category?.getId() || null
-    )
+    const categories = await this.categoryRepository.findAllByParentId(category?.getId() || null)
 
     for (let i = 0; i < categories.length; i++) {
       const categoryFound = categories[i]
@@ -153,18 +140,11 @@ export class CategoryService {
     }
 
     return category.setUrn(
-      await this.generateUrn(
-        data.urn || data.label || category.getLabel(),
-        category
-      )
+      await this.generateUrn(data.urn || data.label || category.getLabel(), category)
     )
   }
 
-  private async generateUrn(
-    str: string,
-    category?: Category,
-    count: number = 0
-  ) {
+  private async generateUrn(str: string, category?: Category, count: number = 0) {
     const slug = `${kebabCase(str)}${count ? `-${count}` : ''}`
 
     try {

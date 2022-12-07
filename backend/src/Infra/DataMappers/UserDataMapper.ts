@@ -1,6 +1,5 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
-
 import { User } from '../../Domain/User/Models/User'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 import { UserDao } from '../Models/UserDao'
 
 export class UserDataMapper extends EntityDataMapperContract<User, UserDao> {

@@ -1,10 +1,7 @@
 import { CategoryTree } from '../../Domain/Category/Models/CategoryTree'
-import { EntityDataMapperContract } from 'ecommsystem-core'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 
-export class CategoryTreeCacheDataMapper extends EntityDataMapperContract<
-  CategoryTree[],
-  any[]
-> {
+export class CategoryTreeCacheDataMapper extends EntityDataMapperContract<CategoryTree[], any[]> {
   toDomainEntity(entities: any[]): CategoryTree[] {
     return entities.map(entity => {
       const categoryTree = new CategoryTree(entity.id, entity.label, entity.urn)

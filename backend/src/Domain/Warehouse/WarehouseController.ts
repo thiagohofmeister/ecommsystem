@@ -1,7 +1,9 @@
-import { BaseController, CoreRequest, ResponseTypeEnum } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
-import { Factory } from '../../Shared/Factories/Factory'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
+import { Factory } from '../../Shared/Factories/Factory'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { WarehouseView } from './Views/WarehouseView'
 import { WarehouseFacade } from './WarehouseFacade'
 
@@ -33,11 +35,7 @@ export class WarehouseController extends BaseController {
     )
   }
 
-  public async putPriorities(
-    req: CoreRequest,
-    res: Response,
-    next: NextFunction
-  ) {
+  public async putPriorities(req: CoreRequest, res: Response, next: NextFunction) {
     await this.responseHandler(
       res,
       next,
@@ -47,12 +45,7 @@ export class WarehouseController extends BaseController {
   }
 
   public async get(req: CoreRequest, res: Response, next: NextFunction) {
-    await this.responseHandler(
-      res,
-      next,
-      this.getFacade(req).list(req.query),
-      ResponseTypeEnum.OK
-    )
+    await this.responseHandler(res, next, this.getFacade(req).list(req.query), ResponseTypeEnum.OK)
   }
 
   public async getOneById(req: CoreRequest, res: Response, next: NextFunction) {
@@ -65,9 +58,7 @@ export class WarehouseController extends BaseController {
   }
 
   protected getFacade(req: CoreRequest): WarehouseFacade {
-    return Factory.getInstance()
-      .buildFacadeFactory(req.context?.storeId)
-      .buildWarehouseFacade()
+    return Factory.getInstance().buildFacadeFactory(req.context?.storeId).buildWarehouseFacade()
   }
 
   protected getView() {

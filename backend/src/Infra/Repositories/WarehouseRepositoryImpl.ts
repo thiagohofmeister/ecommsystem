@@ -1,11 +1,9 @@
-import {
-  IFilterDefault,
-  TypeOrmMysqlRepositoryContract
-} from 'ecommsystem-core'
 import { In, SelectQueryBuilder } from 'typeorm'
 
 import { Warehouse } from '../../Domain/Warehouse/Models/Warehouse'
 import { WarehouseRepository } from '../../Domain/Warehouse/Repositories/WarehouseRepository'
+import { IFilterDefault } from '../../Shared/Models/Interfaces/IFilterDefault'
+import { TypeOrmMysqlRepositoryContract } from '../../Shared/Repositories/Contracts/TypeOrmMysqlRepositoryContract'
 import { WarehouseDao } from '../Models/WarehouseDao'
 
 export class WarehouseRepositoryImpl
@@ -39,10 +37,7 @@ export class WarehouseRepositoryImpl
     return last.priority + 1
   }
 
-  async findByZipCodeAndNumber(
-    addressZipCode: string,
-    addressNumber: string
-  ): Promise<Warehouse> {
+  async findByZipCodeAndNumber(addressZipCode: string, addressNumber: string): Promise<Warehouse> {
     const warehouse = await this.repository
       .createQueryBuilder()
       .where({

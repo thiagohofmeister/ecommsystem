@@ -23,7 +23,7 @@ export const LayoutContentBottom: React.FC<PropsWithChildren> = ({ children }) =
 
   useEffect(() => {
     setRef(document.querySelector(`.${pageContainerClasses.root}`))
-  }, [])
+  }, [pageContainerClasses.root])
 
   const Component = <div className={classes.root}>{children}</div>
 

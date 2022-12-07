@@ -1,6 +1,7 @@
-import { DataNotFoundException, IItemListModel } from 'ecommsystem-core'
 import { kebabCase } from 'lodash'
 
+import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
+import { IItemListModel } from '../../Shared/Models/Interfaces/IItemListModel'
 import { BrandValidator } from './BrandValidator'
 import { BrandCreateDto } from './Dto/BrandCreateDto'
 import { BrandGetListFilterDto } from './Dto/BrandGetListFilterDto'
@@ -21,11 +22,7 @@ export class BrandService {
     return this.save(storeId, data)
   }
 
-  public async update(
-    id: string,
-    storeId: string,
-    data: BrandUpdateDto
-  ): Promise<Brand> {
+  public async update(id: string, storeId: string, data: BrandUpdateDto): Promise<Brand> {
     await this.brandValidator.brandUpdatePayloadValidate(data)
 
     return this.save(storeId, data, await this.getOneById(id))
@@ -35,27 +32,17 @@ export class BrandService {
     return this.brandRepository.findOneByPrimaryColumn(id)
   }
 
-  public async list(
-    filter: BrandGetListFilterDto
-  ): Promise<IItemListModel<Brand>> {
+  public async list(filter: BrandGetListFilterDto): Promise<IItemListModel<Brand>> {
     return this.brandRepository.findAll(filter)
   }
 
-  private async save(
-    storeId: string,
-    data: BrandSaveDto,
-    brand?: Brand
-  ): Promise<Brand> {
+  private async save(storeId: string, data: BrandSaveDto, brand?: Brand): Promise<Brand> {
     const brandToSave = await this.getBrandToSave(storeId, data, brand)
 
     return this.brandRepository.save(brandToSave)
   }
 
-  private async getBrandToSave(
-    storeId: string,
-    data: BrandSaveDto,
-    brand?: Brand
-  ): Promise<Brand> {
+  private async getBrandToSave(storeId: string, data: BrandSaveDto, brand?: Brand): Promise<Brand> {
     if (!brand) {
       return new Brand(
         storeId,
@@ -73,9 +60,7 @@ export class BrandService {
       brand.setDescription(data.description)
     }
 
-    return brand.setUrn(
-      await this.generateUrn(data.urn || data.label || brand.getLabel(), brand)
-    )
+    return brand.setUrn(await this.generateUrn(data.urn || data.label || brand.getLabel(), brand))
   }
 
   private async generateUrn(str: string, brand?: Brand, count: number = 0) {

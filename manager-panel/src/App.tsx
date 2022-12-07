@@ -1,6 +1,3 @@
-import './App.scss'
-import 'components/Toast/Toast.scss'
-
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 import { Suspense } from 'react'
 import { QueryClientProvider } from 'react-query'

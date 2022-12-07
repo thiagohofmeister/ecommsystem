@@ -1,8 +1,8 @@
 import * as cors from 'cors'
 import * as dotenv from 'dotenv'
-import { ErrorHandler } from 'ecommsystem-core'
 import * as express from 'express'
 
+import { ErrorHandler } from '../Shared/Middlewares/ErrorHandler'
 import { MySQL } from './Database/MySQL'
 import { Redis } from './Database/Redis'
 import { RoutesHandler } from './Routes/RoutesHandler'

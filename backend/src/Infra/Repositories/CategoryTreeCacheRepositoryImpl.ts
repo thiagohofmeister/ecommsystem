@@ -1,7 +1,6 @@
-import { RedisClientRepositoryContract } from 'ecommsystem-core'
-
 import { CategoryTree } from '../../Domain/Category/Models/CategoryTree'
 import { CategoryTreeCacheRepository } from '../../Domain/Category/Repositories/CategoryTreeCacheRepository'
+import { RedisClientRepositoryContract } from '../../Shared/Repositories/Contracts/RedisClientRepositoryContract'
 
 export class CategoryTreeCacheRepositoryImpl
   extends RedisClientRepositoryContract<CategoryTree[]>

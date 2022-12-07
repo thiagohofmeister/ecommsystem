@@ -1,4 +1,4 @@
-import { ConflictException } from 'ecommsystem-core'
+import { ConflictException } from '../../../Shared/Models/Exceptions/ConflictException'
 
 export class ProductConflict extends ConflictException {
   constructor() {

@@ -1,7 +1,9 @@
-import { BaseController, CoreRequest, ResponseTypeEnum } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
 import { Factory } from '../../Shared/Factories/Factory'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { AttributeFacade } from './AttributeFacade'
 import { AttributeView } from './Views/AttributeView'
 
@@ -33,12 +35,7 @@ export class AttributeController extends BaseController {
   }
 
   public async get(req: CoreRequest, res: Response, next: NextFunction) {
-    await this.responseHandler(
-      res,
-      next,
-      this.getFacade(req).list(req.query),
-      ResponseTypeEnum.OK
-    )
+    await this.responseHandler(res, next, this.getFacade(req).list(req.query), ResponseTypeEnum.OK)
   }
 
   public async getOneById(req: CoreRequest, res: Response, next: NextFunction) {
@@ -51,9 +48,7 @@ export class AttributeController extends BaseController {
   }
 
   protected getFacade(req: CoreRequest): AttributeFacade {
-    return Factory.getInstance()
-      .buildFacadeFactory(req.context?.storeId)
-      .buildAttributeFacade()
+    return Factory.getInstance().buildFacadeFactory(req.context?.storeId).buildAttributeFacade()
   }
 
   protected getView() {

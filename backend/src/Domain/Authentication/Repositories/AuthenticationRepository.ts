@@ -1,4 +1,4 @@
-import { IRepository, RedisCollection } from 'ecommsystem-core'
+import { IRepository } from '../../../Shared/Models/Interfaces/IRepository'
+import { RedisCollection } from '../../../Shared/Models/RedisCollection'
 
-export interface AuthenticationRepository
-  extends IRepository<RedisCollection<any[]>> {}
+export interface AuthenticationRepository extends IRepository<RedisCollection<any[]>> {}

@@ -1,5 +1,5 @@
-import { DataNotFoundException, InvalidDataException } from 'ecommsystem-core'
-
+import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
+import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { StoreService } from '../Store/StoreService'
 import { UserService } from '../User/UserService'
 import { RegisterCreateDto } from './Dto/RegisterCreateDto'
@@ -18,15 +18,9 @@ export class RegisterService {
 
     const invalidDataException = new InvalidDataException('Invalid data.')
 
-    await this.validateIfUserAlreadyExists(
-      data.user.documentNumber,
-      invalidDataException
-    )
+    await this.validateIfUserAlreadyExists(data.user.documentNumber, invalidDataException)
 
-    await this.validateIfStoreAlreadyExists(
-      data.store.document.number,
-      invalidDataException
-    )
+    await this.validateIfStoreAlreadyExists(data.store.document.number, invalidDataException)
 
     if (!!invalidDataException.getReasons().length) {
       throw invalidDataException

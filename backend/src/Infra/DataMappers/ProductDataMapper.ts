@@ -1,11 +1,8 @@
-import { ProductDao } from '../Models/ProductDao'
 import { Product } from '../../Domain/Product/Models/Product'
-import { EntityDataMapperContract } from 'ecommsystem-core'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
+import { ProductDao } from '../Models/ProductDao'
 
-export class ProductDataMapper extends EntityDataMapperContract<
-  Product,
-  ProductDao
-> {
+export class ProductDataMapper extends EntityDataMapperContract<Product, ProductDao> {
   toDomainEntity(entity: ProductDao): Product {
     return new Product(
       entity.storeId,

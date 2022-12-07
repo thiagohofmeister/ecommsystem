@@ -1,7 +1,7 @@
-import { JoiSchemaValidatorContract } from 'ecommsystem-core'
-import { Schema } from 'joi'
 import * as Joi from 'joi'
+import { Schema } from 'joi'
 
+import { JoiSchemaValidatorContract } from '../../Shared/Validators/JoiSchemaValidatorContract'
 import { WarehouseCreateDto } from './Dto/WarehouseCreateDto'
 import { WarehouseSavePriorityDto } from './Dto/WarehouseSavePriorityDto'
 import { WarehouseUpdateDto } from './Dto/WarehouseUpdateDto'
@@ -48,22 +48,14 @@ export class WarehouseValidator extends JoiSchemaValidatorContract {
   }
 
   public async warehouseCreatePayloadValidate(payload: WarehouseCreateDto) {
-    return this.validateBySchema<WarehouseCreateDto>(
-      payload,
-      this.warehouseCreateSchema
-    )
+    return this.validateBySchema<WarehouseCreateDto>(payload, this.warehouseCreateSchema)
   }
 
   public async warehouseUpdatePayloadValidate(payload: WarehouseUpdateDto) {
-    return this.validateBySchema<WarehouseUpdateDto>(
-      payload,
-      this.warehouseUpdateSchema
-    )
+    return this.validateBySchema<WarehouseUpdateDto>(payload, this.warehouseUpdateSchema)
   }
 
-  public async warehouseSavePriorityPayloadValidate(
-    payload: WarehouseSavePriorityDto[]
-  ) {
+  public async warehouseSavePriorityPayloadValidate(payload: WarehouseSavePriorityDto[]) {
     return this.validateBySchema<WarehouseSavePriorityDto[]>(
       payload,
       this.warehouseSavePrioritySchema

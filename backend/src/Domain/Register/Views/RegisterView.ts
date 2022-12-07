@@ -1,5 +1,4 @@
-import { ViewContract } from 'ecommsystem-core'
-
+import { ViewContract } from '../../../Shared/Views/Contracts/ViewContract'
 import { DocumentTypeEnum } from '../../Store/Enums/DocumentTypeEnum'
 import { UserStatusEnum } from '../../User/Enums/UserStatusEnum'
 import { Register } from '../Models/Register'

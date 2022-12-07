@@ -1,7 +1,7 @@
-import { JoiSchemaValidatorContract } from 'ecommsystem-core'
-import { Schema } from 'joi'
 import * as Joi from 'joi'
+import { Schema } from 'joi'
 
+import { JoiSchemaValidatorContract } from '../../Shared/Validators/JoiSchemaValidatorContract'
 import { CategoryCreateDto } from './Dto/CategoryCreateDto'
 import { CategoryUpdateDto } from './Dto/CategoryUpdateDto'
 
@@ -32,16 +32,10 @@ export class CategoryValidator extends JoiSchemaValidatorContract {
   }
 
   public async categoryCreatePayloadValidate(payload: CategoryCreateDto) {
-    return this.validateBySchema<CategoryCreateDto>(
-      payload,
-      this.categoryCreateSchema
-    )
+    return this.validateBySchema<CategoryCreateDto>(payload, this.categoryCreateSchema)
   }
 
   public async categoryUpdatePayloadValidate(payload: CategoryUpdateDto) {
-    return this.validateBySchema<CategoryUpdateDto>(
-      payload,
-      this.categoryUpdateSchema
-    )
+    return this.validateBySchema<CategoryUpdateDto>(payload, this.categoryUpdateSchema)
   }
 }

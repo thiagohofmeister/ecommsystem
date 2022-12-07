@@ -1,6 +1,7 @@
-import { DataNotFoundException, InvalidDataException } from 'ecommsystem-core'
 import { In, Not } from 'typeorm'
 
+import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
+import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { AttributeRepository } from '../Attribute/Repositories/AttributeRepository'
 import { BrandRepository } from '../Brand/Repositories/BrandRepository'
 import { CategoryRepository } from '../Category/Repositories/CategoryRepository'
@@ -55,7 +56,11 @@ export class ProductService {
     return this.productRepository.findOneByPrimaryColumn(id)
   }
 
-  public async savePrices(productId: string, storeId: string, data: ProductSavePriceDto[]): Promise<Price[]> {
+  public async savePrices(
+    productId: string,
+    storeId: string,
+    data: ProductSavePriceDto[]
+  ): Promise<Price[]> {
     await this.productValidator.productSavePricesPayloadValidate(data)
 
     const product = await this.productRepository.findOneByPrimaryColumn(productId)
@@ -71,7 +76,9 @@ export class ProductService {
 
   private async clearPrices(storeId: string, product: Product, data: ProductSavePriceDto[]) {
     const variationSkusSent =
-      data.length === 1 && !data[0].sku ? product.getVariationSkus() : data.map(priceDto => priceDto.sku)
+      data.length === 1 && !data[0].sku
+        ? product.getVariationSkus()
+        : data.map(priceDto => priceDto.sku)
 
     const variationSkus = product.getVariationSkus().filter(sku => !variationSkusSent.includes(sku))
 
@@ -93,7 +100,9 @@ export class ProductService {
     if (data.length === 1 && !data[0].sku) {
       const priceDto = data[0]
       product.getVariations().forEach(variation => {
-        promises.push(this.createPrice(variation, storeId, priceDto.list, priceDto.sale, invalidDataException))
+        promises.push(
+          this.createPrice(variation, storeId, priceDto.list, priceDto.sale, invalidDataException)
+        )
       })
 
       return await Promise.all(promises)
@@ -110,7 +119,9 @@ export class ProductService {
         return
       }
 
-      promises.push(this.createPrice(variation, storeId, priceDto.list, priceDto.sale, invalidDataException))
+      promises.push(
+        this.createPrice(variation, storeId, priceDto.list, priceDto.sale, invalidDataException)
+      )
     })
 
     if (!!invalidDataException.getReasons().length) {
@@ -140,7 +151,11 @@ export class ProductService {
     }
   }
 
-  private async deleteUnusedImages(productId: string, storeId: string, idsToKeep: string | string[]) {
+  private async deleteUnusedImages(
+    productId: string,
+    storeId: string,
+    idsToKeep: string | string[]
+  ) {
     if (typeof idsToKeep === 'string') {
       idsToKeep = [idsToKeep]
     }
@@ -158,7 +173,10 @@ export class ProductService {
 
     // TODO: Validate if each attribute exists `data.variations.[].attributes`
 
-    const combinations = await this.getVariationCombinations(productToSave.getVariationTemplate(), data.variations)
+    const combinations = await this.getVariationCombinations(
+      productToSave.getVariationTemplate(),
+      data.variations
+    )
 
     await this.fillImages(productToSave, data.images, combinations['images'])
 
@@ -201,7 +219,9 @@ export class ProductService {
       variationsDto.forEach(varDto => {
         const combination = combinationIds[key]
           .map(combinationId => {
-            const attribute = varDto.attributes.find(varAttr => varAttr.attribute.id === combinationId)
+            const attribute = varDto.attributes.find(
+              varAttr => varAttr.attribute.id === combinationId
+            )
 
             return attribute.value
           })
@@ -219,7 +239,9 @@ export class ProductService {
       return
     }
 
-    const attributes = await this.attributeRepository.findAllByIds(variationTemplate.attributes.map(attr => attr.id))
+    const attributes = await this.attributeRepository.findAllByIds(
+      variationTemplate.attributes.map(attr => attr.id)
+    )
 
     const invalidDataException = new InvalidDataException('Invalid data.')
 
@@ -254,7 +276,14 @@ export class ProductService {
 
   private async getProductToSaved(product: Product, storeId: string, data: ProductSaveDto) {
     if (!product) {
-      return new Product(storeId, data.title, data.description, data.variationTemplate, true, data.id)
+      return new Product(
+        storeId,
+        data.title,
+        data.description,
+        data.variationTemplate,
+        true,
+        data.id
+      )
         .setCategory(await this.getCategory(data.category.id))
         .setBrand(await this.getBrand(data.brand.id))
     }
@@ -282,7 +311,11 @@ export class ProductService {
     return product
   }
 
-  private async fillImages(product: Product, images: ProductCreateDto['images'], combinations: string[]) {
+  private async fillImages(
+    product: Product,
+    images: ProductCreateDto['images'],
+    combinations: string[]
+  ) {
     if (!images) {
       return
     }
@@ -335,9 +368,15 @@ export class ProductService {
     }
   }
 
-  private async saveVariations(product: Product, variations: ProductCreateDto['variations'], isUpdate: boolean) {
+  private async saveVariations(
+    product: Product,
+    variations: ProductCreateDto['variations'],
+    isUpdate: boolean
+  ) {
     if (!!variations) {
-      const skusToRemove = product.getVariationSkus().filter(sku => !variations.map(v => v.sku).includes(sku))
+      const skusToRemove = product
+        .getVariationSkus()
+        .filter(sku => !variations.map(v => v.sku).includes(sku))
 
       await Promise.all(
         variations.map(async (variation, index) => {

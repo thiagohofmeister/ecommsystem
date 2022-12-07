@@ -1,5 +1,5 @@
-import { EntityDataMapperContract } from 'ecommsystem-core'
 import { Price } from '../../Domain/Product/Models/Price'
+import { EntityDataMapperContract } from '../../Shared/DataMappers/Contracts/EntityDataMapperContract'
 import { PriceDao } from '../Models/PriceDao'
 
 export class PriceDataMapper extends EntityDataMapperContract<Price, PriceDao> {

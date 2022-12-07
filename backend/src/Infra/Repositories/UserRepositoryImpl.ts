@@ -1,8 +1,8 @@
 import { createHash } from 'crypto'
-import { TypeOrmMysqlRepositoryContract } from 'ecommsystem-core'
 
 import { User } from '../../Domain/User/Models/User'
 import { UserRepository } from '../../Domain/User/Repositories/UserRepository'
+import { TypeOrmMysqlRepositoryContract } from '../../Shared/Repositories/Contracts/TypeOrmMysqlRepositoryContract'
 import { UserDao } from '../Models/UserDao'
 
 export class UserRepositoryImpl
@@ -14,10 +14,7 @@ export class UserRepositoryImpl
       .createQueryBuilder()
       .leftJoinAndSelect('UserDao.storesOwned', 'storesOwned')
       .leftJoinAndSelect('UserDao.store', 'store')
-      .where(
-        '(UserDao.email = :login or UserDao.document_number = :password)',
-        { login }
-      )
+      .where('(UserDao.email = :login or UserDao.document_number = :password)', { login })
       .andWhere('UserDao.password = :password', {
         password: this.createHash256(this.createHash256(password))
       })

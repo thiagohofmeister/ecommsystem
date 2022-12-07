@@ -1,7 +1,9 @@
-import { BaseController, CoreRequest, ResponseTypeEnum } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
-import { Factory } from '../../Shared/Factories/Factory'
 
+import { BaseController } from '../../Shared/Controllers/BaseController'
+import { ResponseTypeEnum } from '../../Shared/Enums/ResponseTypeEnum'
+import { Factory } from '../../Shared/Factories/Factory'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { CategoryFacade } from './CategoryFacade'
 import { CategoryTreeView } from './Views/CategoryTreeView'
 import { CategoryView } from './Views/CategoryView'
@@ -15,11 +17,7 @@ export class CategoryController extends BaseController {
     this.getOneById = this.getOneById.bind(this)
   }
 
-  public async post(
-    req: CoreRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async post(req: CoreRequest, res: Response, next: NextFunction): Promise<void> {
     return this.responseHandler(
       res,
       next,
@@ -28,11 +26,7 @@ export class CategoryController extends BaseController {
     )
   }
 
-  public async patch(
-    req: CoreRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async patch(req: CoreRequest, res: Response, next: NextFunction): Promise<void> {
     return this.responseHandler(
       res,
       next,
@@ -41,11 +35,7 @@ export class CategoryController extends BaseController {
     )
   }
 
-  public async getTree(
-    req: CoreRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async getTree(req: CoreRequest, res: Response, next: NextFunction): Promise<void> {
     return this.responseHandler(
       res,
       next,
@@ -55,11 +45,7 @@ export class CategoryController extends BaseController {
     )
   }
 
-  public async getOneById(
-    req: CoreRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+  public async getOneById(req: CoreRequest, res: Response, next: NextFunction): Promise<void> {
     return this.responseHandler(
       res,
       next,
@@ -69,9 +55,7 @@ export class CategoryController extends BaseController {
   }
 
   protected getFacade(req: CoreRequest): CategoryFacade {
-    return Factory.getInstance()
-      .buildFacadeFactory(req.context?.storeId)
-      .buildCategoryFacade()
+    return Factory.getInstance().buildFacadeFactory(req.context?.storeId).buildCategoryFacade()
   }
 
   protected getView() {

@@ -1,4 +1,3 @@
-import { CoreRequest } from 'ecommsystem-core'
 import { NextFunction, Response } from 'express'
 import * as jwt from 'jsonwebtoken'
 import * as md5 from 'md5'
@@ -6,6 +5,7 @@ import * as md5 from 'md5'
 import { EndpointPermissionsService } from '../../Domain/EndpointPermissions/EndpointPermissionsService'
 import { AuthenticationTokenDto } from '../../Domain/User/Dto/AuthenticationTokenDto'
 import { UserRoleTypeEnum } from '../../Domain/User/Enums/UserRoleTypeEnum'
+import { CoreRequest } from '../../Shared/Models/Request/CoreRequest'
 import { Redis } from '../Database/Redis'
 
 export class AuthMiddleware {
@@ -40,7 +40,9 @@ export class AuthMiddleware {
       await new Redis().createClient()
       const redis = Redis.getClient()
 
-      const key = `auth:${decodedToken.user.id}:${decodedToken.user.roleType}:${md5(JSON.stringify(decodedToken))}`
+      const key = `auth:${decodedToken.user.id}:${decodedToken.user.roleType}:${md5(
+        JSON.stringify(decodedToken)
+      )}`
 
       userPermissions = JSON.parse(await redis.get(key))
 
@@ -74,7 +76,11 @@ export class AuthMiddleware {
     return !!req.header('x-store')
   }
 
-  private formatRequest(req: CoreRequest, roleType: UserRoleTypeEnum, token?: AuthenticationTokenDto) {
+  private formatRequest(
+    req: CoreRequest,
+    roleType: UserRoleTypeEnum,
+    token?: AuthenticationTokenDto
+  ) {
     if (roleType === UserRoleTypeEnum.GUEST) {
       req.context = {
         storeId: req.header('x-store'),
@@ -104,9 +110,14 @@ export class AuthMiddleware {
     }
   }
 
-  private async validateRoleAndPermissions(req: CoreRequest, roleType: UserRoleTypeEnum, userPermissions) {
+  private async validateRoleAndPermissions(
+    req: CoreRequest,
+    roleType: UserRoleTypeEnum,
+    userPermissions
+  ) {
     const servicePermissions = await new EndpointPermissionsService().get()
-    const permissions = servicePermissions.find(sp => sp.getRoleType() === roleType)?.getPermissions() || []
+    const permissions =
+      servicePermissions.find(sp => sp.getRoleType() === roleType)?.getPermissions() || []
 
     if (!permissions.length) {
       return false
@@ -135,7 +146,10 @@ export class AuthMiddleware {
         break
       }
 
-      if (continue2 || (!permission.methods.includes(req.method) && !permission.methods.includes('*'))) {
+      if (
+        continue2 ||
+        (!permission.methods.includes(req.method) && !permission.methods.includes('*'))
+      ) {
         continue
       }
 

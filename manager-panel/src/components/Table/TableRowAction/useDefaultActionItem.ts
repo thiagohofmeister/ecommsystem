@@ -39,7 +39,3 @@ export const useDefaultActionItems = () => {
     classes
   }
 }
-
-interface DefaultActionItemsProps {
-  iconColor: string
-}
