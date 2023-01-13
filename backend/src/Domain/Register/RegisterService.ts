@@ -1,4 +1,3 @@
-import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { StoreService } from '../Store/StoreService'
 import { UserService } from '../User/UserService'
@@ -37,35 +36,23 @@ export class RegisterService {
     documentNumber: string,
     invalidDataException: InvalidDataException
   ) {
-    try {
-      await this.userService.findOneByDocumentNumber(documentNumber)
+    if (!(await this.userService.findOneByDocumentNumber(documentNumber))) return
 
-      invalidDataException.addReason({
-        id: `user.documentNumber.${documentNumber}.alreadyExists`,
-        message: `Field user.documentNumber.${documentNumber} is already exists.`
-      })
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) {
-        throw e
-      }
-    }
+    invalidDataException.addReason({
+      id: `user.documentNumber.${documentNumber}.alreadyExists`,
+      message: `Field user.documentNumber.${documentNumber} is already exists.`
+    })
   }
 
   private async validateIfStoreAlreadyExists(
     documentNumber: string,
     invalidDataException: InvalidDataException
   ) {
-    try {
-      await this.userService.findOneByDocumentNumber(documentNumber)
+    if (!(await this.userService.findOneByDocumentNumber(documentNumber))) return
 
-      invalidDataException.addReason({
-        id: `store.document.number.${documentNumber}.alreadyExists`,
-        message: `Field store.document.number.${documentNumber} is already exists.`
-      })
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) {
-        throw e
-      }
-    }
+    invalidDataException.addReason({
+      id: `store.document.number.${documentNumber}.alreadyExists`,
+      message: `Field store.document.number.${documentNumber} is already exists.`
+    })
   }
 }
