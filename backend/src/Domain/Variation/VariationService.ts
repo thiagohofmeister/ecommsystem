@@ -6,6 +6,7 @@ import { Product } from '../Product/Models/Product'
 import { WarehouseRepository } from '../Warehouse/Repositories/WarehouseRepository'
 import { VariationSaveDto } from './Dto/VariationSaveDto'
 import { VariationSavePricesDto } from './Dto/VariationSaveStocksDto'
+import { VariationDataNotFound } from './Exceptions/VariationDataNotFound'
 import { Stock } from './Models/Stock'
 import { Variation } from './Models/Variation'
 import { VariationAttribute } from './Models/VariationAttribute'
@@ -52,6 +53,14 @@ export class VariationService {
     })
   }
 
+  public async getBySku(sku: string): Promise<Variation> {
+    const result = await this.variationRepository.findOneByPrimaryColumn(sku)
+
+    if (!result) throw new VariationDataNotFound()
+
+    return result
+  }
+
   public async saveStocks(
     sku: string,
     storeId: string,
@@ -63,7 +72,7 @@ export class VariationService {
       data.map(stockDto => stockDto.warehouse.id)
     )
 
-    const variation = await this.variationRepository.findOneByPrimaryColumn(sku)
+    const variation = await this.getBySku(sku)
 
     const stocks = await Promise.all(
       data.map(async stockDto => {

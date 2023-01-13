@@ -8,12 +8,6 @@ export class StoreRepositoryImpl
   implements StoreRepository
 {
   async findOneByDocumentNumber(documentNumber: string): Promise<Store> {
-    const store = await this.repository.findOne({ where: { documentNumber } })
-
-    if (!store) {
-      throw this.dataNotFoundException
-    }
-
-    return this.dataMapper.toDomainEntity(store)
+    return this.getOne({ where: { documentNumber } })
   }
 }

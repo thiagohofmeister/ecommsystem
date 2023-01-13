@@ -18,11 +18,7 @@ export class PriceRepositoryImpl
       .leftJoinAndSelect('PriceDao.variation', 'variation')
       .setParameters({ sku, storeId: this.storeId, campaignId })
 
-    const price = await query.getOne()
-
-    if (!price) throw this.dataNotFoundException
-
-    return this.dataMapper.toDomainEntity(price)
+    return this.getOne(query)
   }
 
   protected customToFindOneByPrimaryColumn(

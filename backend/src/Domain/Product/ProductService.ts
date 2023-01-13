@@ -3,8 +3,8 @@ import { In, Not } from 'typeorm'
 import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { AttributeRepository } from '../Attribute/Repositories/AttributeRepository'
-import { BrandRepository } from '../Brand/Repositories/BrandRepository'
-import { CategoryRepository } from '../Category/Repositories/CategoryRepository'
+import { BrandService } from '../Brand/BrandService'
+import { CategoryService } from '../Category/CategoryService'
 import { Variation } from '../Variation/Models/Variation'
 import { VariationService } from '../Variation/VariationService'
 import { ProductCreateDto } from './Dto/ProductCreateDto'
@@ -13,6 +13,7 @@ import { ProductSaveDto } from './Dto/ProductSaveDto'
 import { ProductSavePriceDto } from './Dto/ProductSavePriceDto'
 import { ProductUpdateDto } from './Dto/ProductUpdateDto'
 import { ProductConflict } from './Exceptions/ProductConflict'
+import { ProductDataNotFound } from './Exceptions/ProductDataNotFound'
 import { ProductVariationTemplate } from './Interfaces/ProductVariationTemplate'
 import { Image } from './Models/Image'
 import { Price } from './Models/Price'
@@ -29,8 +30,8 @@ export class ProductService {
     private readonly priceRepository: PriceRepository,
     private readonly imageRepository: ImageRepository,
     private readonly attributeRepository: AttributeRepository,
-    private readonly brandRepository: BrandRepository,
-    private readonly categoryRepository: CategoryRepository,
+    private readonly brandService: BrandService,
+    private readonly categoryService: CategoryService,
     private readonly variationService: VariationService
   ) {}
 
@@ -53,7 +54,11 @@ export class ProductService {
   }
 
   public async getOneById(id: string) {
-    return this.productRepository.findOneByPrimaryColumn(id)
+    const result = await this.productRepository.findOneByPrimaryColumn(id)
+
+    if (!result) throw new ProductDataNotFound()
+
+    return result
   }
 
   public async savePrices(
@@ -63,7 +68,7 @@ export class ProductService {
   ): Promise<Price[]> {
     await this.productValidator.productSavePricesPayloadValidate(data)
 
-    const product = await this.productRepository.findOneByPrimaryColumn(productId)
+    const product = await this.getOneById(productId)
 
     await this.clearPrices(storeId, product, data)
 
@@ -184,7 +189,7 @@ export class ProductService {
 
     await this.saveVariations(productSaved, data.variations, !!product)
 
-    return this.productRepository.findOneByPrimaryColumn(productSaved.getId())
+    return this.getOneById(productSaved.getId())
   }
 
   private async getVariationCombinations(
@@ -400,7 +405,7 @@ export class ProductService {
 
   private async getCategory(id: string) {
     try {
-      return await this.categoryRepository.findOneByPrimaryColumn(id)
+      return await this.categoryService.getOneById(id)
     } catch (err) {
       if (!(err instanceof DataNotFoundException)) throw err
 
@@ -415,7 +420,7 @@ export class ProductService {
 
   private async getBrand(id: string) {
     try {
-      return await this.brandRepository.findOneByPrimaryColumn(id)
+      return await this.brandService.getOneById(id)
     } catch (err) {
       if (!(err instanceof DataNotFoundException)) throw err
 
@@ -429,15 +434,6 @@ export class ProductService {
   }
 
   private async validateProductAlreadyExists(id: string) {
-    let exists = false
-
-    try {
-      await this.productRepository.findOneByPrimaryColumn(id)
-      exists = true
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) throw e
-    }
-
-    if (exists) throw new ProductConflict()
+    if (!!(await this.getOneById(id))) throw new ProductConflict()
   }
 }

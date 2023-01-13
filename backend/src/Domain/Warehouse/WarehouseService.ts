@@ -7,6 +7,7 @@ import { WarehouseSaveDto } from './Dto/WarehouseSaveDto'
 import { WarehouseSavePriorityDto } from './Dto/WarehouseSavePriorityDto'
 import { WarehouseUpdateDto } from './Dto/WarehouseUpdateDto'
 import { WarehouseConflict } from './Exceptions/WarehouseConflict'
+import { WarehouseDataNotFound } from './Exceptions/WarehouseDataNotFound'
 import { Warehouse } from './Models/Warehouse'
 import { WarehouseRepository } from './Repositories/WarehouseRepository'
 import { WarehouseValidator } from './WarehouseValidator'
@@ -32,7 +33,11 @@ export class WarehouseService {
   }
 
   public async getOneById(id: string): Promise<Warehouse> {
-    return this.warehouseRepository.findOneByPrimaryColumn(id)
+    const result = await this.warehouseRepository.findOneByPrimaryColumn(id)
+
+    if (!result) throw new WarehouseDataNotFound()
+
+    return result
   }
 
   public async savePriorities(storeId: string, data: WarehouseSavePriorityDto[]) {

@@ -7,6 +7,7 @@ import { BrandCreateDto } from './Dto/BrandCreateDto'
 import { BrandGetListFilterDto } from './Dto/BrandGetListFilterDto'
 import { BrandSaveDto } from './Dto/BrandSaveDto'
 import { BrandUpdateDto } from './Dto/BrandUpdateDto'
+import { BrandDataNotFound } from './Exceptions/BrandDataNotFound'
 import { Brand } from './Models/Brand'
 import { BrandRepository } from './Repositories/BrandRepository'
 
@@ -29,7 +30,11 @@ export class BrandService {
   }
 
   public async getOneById(id: string): Promise<Brand> {
-    return this.brandRepository.findOneByPrimaryColumn(id)
+    const result = await this.brandRepository.findOneByPrimaryColumn(id)
+
+    if (!result) throw new BrandDataNotFound()
+
+    return result
   }
 
   public async list(filter: BrandGetListFilterDto): Promise<IItemListModel<Brand>> {

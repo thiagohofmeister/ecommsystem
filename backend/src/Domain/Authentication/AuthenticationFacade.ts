@@ -4,12 +4,8 @@ import { Authentication } from './Models/Authentication'
 
 export class AuthenticationFacade extends FacadeContract {
   public async create(data: AuthenticationCreateDto): Promise<Authentication> {
-    return await this.serviceFactory
-      .buildTransactionalService()
-      .execute(async manager => {
-        return await this.serviceFactory
-          .buildAuthenticationService(manager)
-          .create(data)
-      })
+    return await this.serviceFactory.buildTransactionalService().execute(async manager => {
+      return await this.serviceFactory.buildAuthenticationService(manager).create(data)
+    })
   }
 }

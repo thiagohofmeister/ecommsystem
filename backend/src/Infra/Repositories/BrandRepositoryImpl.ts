@@ -8,12 +8,8 @@ export class BrandRepositoryImpl
   implements BrandRepository
 {
   async findOneByUrn(urn: string): Promise<Brand> {
-    const category = await this.repository.findOne({
+    return this.getOne({
       where: { urn, storeId: this.storeId }
     })
-
-    if (!category) throw this.dataNotFoundException
-
-    return this.dataMapper.toDomainEntity(category)
   }
 }

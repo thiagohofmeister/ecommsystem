@@ -8,12 +8,11 @@ export class AttributeRepositoryImpl
   implements AttributeRepository
 {
   async findAllByIds(ids: string[]): Promise<Attribute[]> {
-    const attributes = await this.repository
+    const query = await this.repository
       .createQueryBuilder()
       .where({ storeId: this.storeId })
       .where('id IN (:ids)', { ids })
-      .getMany()
 
-    return this.dataMapper.toDomainEntityMany(attributes)
+    return (await this.getMany(query)).items
   }
 }

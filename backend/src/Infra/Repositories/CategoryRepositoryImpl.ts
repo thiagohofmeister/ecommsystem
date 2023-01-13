@@ -10,21 +10,16 @@ export class CategoryRepositoryImpl
   implements CategoryRepository
 {
   async findAllByParentId(parentId: string): Promise<Category[]> {
-    const categories = await this.repository
+    const query = await this.repository
       .createQueryBuilder()
       .where({ storeId: this.storeId, parent: { id: parentId || IsNull() } })
-      .getMany()
 
-    return this.dataMapper.toDomainEntityMany(categories)
+    return (await this.getMany(query)).items
   }
 
   async findOneByUrn(urn: string): Promise<Category> {
-    const category = await this.repository.findOne({
+    return this.getOne({
       where: { storeId: this.storeId, urn }
     })
-
-    if (!category) throw this.dataNotFoundException
-
-    return this.dataMapper.toDomainEntity(category)
   }
 }

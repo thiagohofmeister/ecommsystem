@@ -14,7 +14,6 @@ export class UserController extends BaseController {
   }
 
   async getLogged(request: CoreRequest, response: Response, next: NextFunction) {
-    console.log('asdasd')
     return this.responseHandler(
       response,
       next,

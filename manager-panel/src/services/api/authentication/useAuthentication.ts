@@ -9,7 +9,6 @@ export const useAuthentication = () => {
 
   const auth = useCallback(
     async (login: string, password: string) => {
-      console.log({ userData: login, userPassword: password })
       return (
         await instance.post(`${endpoint}`, null, {
           headers: {

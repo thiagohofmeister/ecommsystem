@@ -2,6 +2,7 @@ import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFou
 import { UnauthorizedException } from '../../Shared/Models/Exceptions/UnauthorizedException'
 import { AuthenticationCreateDto } from '../Authentication/Dto/AuthenticationCreateDto'
 import { UserCreateDto } from './Dto/UserCreateDto'
+import { UserDataNotFound } from './Exceptions/UserDataNotFound'
 import { User } from './Models/User'
 import { UserRepository } from './Repositories/UserRepository'
 import { UserValidator } from './UserValidator'
@@ -13,7 +14,11 @@ export class UserService {
   ) {}
 
   async getById(id: string) {
-    return this.repository.findOneByPrimaryColumn(id)
+    const result = await this.repository.findOneByPrimaryColumn(id)
+
+    if (!result) throw new UserDataNotFound()
+
+    return result
   }
 
   async findOneByAuthData(data: AuthenticationCreateDto) {

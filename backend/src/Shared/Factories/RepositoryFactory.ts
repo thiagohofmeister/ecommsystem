@@ -1,31 +1,18 @@
 import { RedisClientType } from 'redis'
 import { DataSource, EntityManager } from 'typeorm'
 
-import { AttributeDataNotFound } from '../../Domain/Attribute/Exceptions/AttributeDataNotFound'
 import { AttributeRepository } from '../../Domain/Attribute/Repositories/AttributeRepository'
 import { AuthenticationRepository } from '../../Domain/Authentication/Repositories/AuthenticationRepository'
-import { BrandDataNotFound } from '../../Domain/Brand/Exceptions/BrandDataNotFound'
 import { BrandRepository } from '../../Domain/Brand/Repositories/BrandRepository'
-import { CategoryDataNotFound } from '../../Domain/Category/Exceptions/CategoryDataNotFound'
-import { CategoryTreeCacheDataNotFound } from '../../Domain/Category/Exceptions/CategoryTreeCacheDataNotFound'
 import { CategoryRepository } from '../../Domain/Category/Repositories/CategoryRepository'
 import { CategoryTreeCacheRepository } from '../../Domain/Category/Repositories/CategoryTreeCacheRepository'
-import { ImageDataNotFound } from '../../Domain/Product/Exceptions/ImageDataNotFound'
-import { PriceDataNotFound } from '../../Domain/Product/Exceptions/PriceDataNotFound'
-import { ProductDataNotFound } from '../../Domain/Product/Exceptions/ProductDataNotFound'
 import { ImageRepository } from '../../Domain/Product/Repositories/ImageRepository'
 import { PriceRepository } from '../../Domain/Product/Repositories/PriceRepository'
-import { StoreDataNotFound } from '../../Domain/Store/Exceptions/StoreDataNotFound'
 import { StoreRepository } from '../../Domain/Store/Repositories/StoreRepository'
-import { UserDataNotFound } from '../../Domain/User/Exceptions/UserDataNotFound'
 import { UserRepository } from '../../Domain/User/Repositories/UserRepository'
-import { StockDataNotFound } from '../../Domain/Variation/Exceptions/StockDataNotFound'
-import { VariationAttributeDataNotFound } from '../../Domain/Variation/Exceptions/VariationAttributeDataNotFound'
-import { VariationDataNotFound } from '../../Domain/Variation/Exceptions/VariationDataNotFound'
 import { StockRepository } from '../../Domain/Variation/Repositories/StockRepository'
 import { VariationAttributeRepository } from '../../Domain/Variation/Repositories/VariationAttributeRepository'
 import { VariationRepository } from '../../Domain/Variation/Repositories/VariationRepository'
-import { WarehouseDataNotFound } from '../../Domain/Warehouse/Exceptions/WarehouseDataNotFound'
 import { WarehouseRepository } from '../../Domain/Warehouse/Repositories/WarehouseRepository'
 import { AttributeDao } from '../../Infra/Models/AttributeDao'
 import { BrandDao } from '../../Infra/Models/BrandDao'
@@ -67,8 +54,7 @@ export class RepositoryFactory {
     return new CategoryRepositoryImpl(
       this.getManager(manager).getRepository(CategoryDao),
       this.dataMapperFactory.buildCategoryDataMapper(),
-      this.storeId,
-      new CategoryDataNotFound()
+      this.storeId
     )
   }
 
@@ -76,8 +62,7 @@ export class RepositoryFactory {
     return new StockRepositoryImpl(
       this.getManager(manager).getRepository(StockDao),
       this.dataMapperFactory.buildStockDataMapperMediator(),
-      this.storeId,
-      new StockDataNotFound()
+      this.storeId
     )
   }
 
@@ -85,8 +70,7 @@ export class RepositoryFactory {
     return new AttributeRepositoryImpl(
       this.getManager(manager).getRepository(AttributeDao),
       this.dataMapperFactory.buildAttributeDataMapper(),
-      this.storeId,
-      new AttributeDataNotFound()
+      this.storeId
     )
   }
 
@@ -94,8 +78,7 @@ export class RepositoryFactory {
     return new ProductRepositoryImpl(
       this.getManager(manager).getRepository(ProductDao),
       this.dataMapperFactory.buildProductDataMapperMediator(),
-      this.storeId,
-      new ProductDataNotFound()
+      this.storeId
     )
   }
 
@@ -103,8 +86,7 @@ export class RepositoryFactory {
     return new BrandRepositoryImpl(
       this.getManager(manager).getRepository(BrandDao),
       this.dataMapperFactory.buildBrandDataMapper(),
-      this.storeId,
-      new BrandDataNotFound()
+      this.storeId
     )
   }
 
@@ -112,8 +94,7 @@ export class RepositoryFactory {
     return new WarehouseRepositoryImpl(
       this.getManager(manager).getRepository(WarehouseDao),
       this.dataMapperFactory.buildWarehouseDataMapper(),
-      this.storeId,
-      new WarehouseDataNotFound()
+      this.storeId
     )
   }
 
@@ -121,8 +102,7 @@ export class RepositoryFactory {
     return new ImageRepositoryImpl(
       this.getManager(manager).getRepository(ImageDao),
       this.dataMapperFactory.buildImageDataMapper(),
-      this.storeId,
-      new ImageDataNotFound()
+      this.storeId
     )
   }
 
@@ -130,8 +110,7 @@ export class RepositoryFactory {
     return new PriceRepositoryImpl(
       this.getManager(manager).getRepository(PriceDao),
       this.dataMapperFactory.buildPriceDataMapperMediator(),
-      this.storeId,
-      new PriceDataNotFound()
+      this.storeId
     )
   }
 
@@ -139,8 +118,7 @@ export class RepositoryFactory {
     return new VariationAttributeRepositoryImpl(
       this.getManager(manager).getRepository(VariationAttributeDao),
       this.dataMapperFactory.buildVariationAttributeDataMapperMediator(),
-      this.storeId,
-      new VariationAttributeDataNotFound()
+      this.storeId
     )
   }
 
@@ -148,8 +126,7 @@ export class RepositoryFactory {
     return new CategoryTreeCacheRepositoryImpl(
       this.getRedisClient(),
       this.dataMapperFactory.buildCategoryTreeCacheDataMapper(),
-      this.storeId,
-      new CategoryTreeCacheDataNotFound()
+      this.storeId
     )
   }
 
@@ -157,8 +134,7 @@ export class RepositoryFactory {
     return new VariationRepositoryImpl(
       this.getManager(manager).getRepository(VariationDao),
       this.dataMapperFactory.buildVariationDataMapperMediator(),
-      this.storeId,
-      new VariationDataNotFound()
+      this.storeId
     )
   }
 
@@ -166,8 +142,7 @@ export class RepositoryFactory {
     return new UserRepositoryImpl(
       this.getManager(manager).getRepository(UserDao),
       this.dataMapperFactory.buildUserDataMapperMediator(),
-      this.storeId,
-      new UserDataNotFound()
+      this.storeId
     )
   }
 
@@ -175,8 +150,7 @@ export class RepositoryFactory {
     return new StoreRepositoryImpl(
       this.getManager(manager).getRepository(StoreDao),
       this.dataMapperFactory.buildStoreDataMapperMediator(),
-      this.storeId,
-      new StoreDataNotFound()
+      this.storeId
     )
   }
 

@@ -1,11 +1,7 @@
-import {
-  FindOptionsWhere,
-  ObjectID,
-  Repository as TypeOrmRepository,
-  SelectQueryBuilder
-} from 'typeorm'
+import { FindOneOptions, FindOptionsWhere, ObjectID, Repository as TypeOrmRepository, SelectQueryBuilder } from 'typeorm'
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+
 import { EntityDataMapperContract } from '../../DataMappers/Contracts/EntityDataMapperContract'
-import { DataNotFoundException } from '../../Models/Exceptions/DataNotFoundException'
 import { IFilterDefault } from '../../Models/Interfaces/IFilterDefault'
 import { IItemListModel } from '../../Models/Interfaces/IItemListModel'
 import { RepositoryContract } from './RepositoryContract'
@@ -17,35 +13,28 @@ export abstract class TypeOrmMysqlRepositoryContract<
   constructor(
     protected readonly repository: TypeOrmRepository<TDaoEntity>,
     protected dataMapper: EntityDataMapperContract<TDomainEntity, TDaoEntity>,
-    protected storeId: string | null,
-    dataNotFoundException: DataNotFoundException
+    protected storeId: string | null
   ) {
-    super(dataNotFoundException)
+    super()
   }
 
   public async create(entity: TDomainEntity): Promise<TDomainEntity> {
     const result = await this.repository.insert(
-      this.dataMapper.toDaoEntity(entity)
+      this.dataMapper.toDaoEntity(entity) as QueryDeepPartialEntity<TDaoEntity>
     )
 
-    return this.findOneByPrimaryColumn(
-      result.identifiers[0][this.getPrimaryColumnName()]
-    )
+    return this.findOneByPrimaryColumn(result.identifiers[0][this.getPrimaryColumnName()])
   }
 
   public async save(
     entity: TDomainEntity,
     withFindBeforeReturn: boolean = true
   ): Promise<TDomainEntity> {
-    await this.repository.save(
-      this.repository.create(this.dataMapper.toDaoEntity(entity))
-    )
+    await this.repository.save(this.repository.create(this.dataMapper.toDaoEntity(entity)))
 
     if (!withFindBeforeReturn) return entity
 
-    return this.findOneByPrimaryColumn(
-      this.getPrimaryColumnValueByEntity(entity)
-    )
+    return this.findOneByPrimaryColumn(this.getPrimaryColumnValueByEntity(entity))
   }
 
   public async delete(
@@ -69,77 +58,58 @@ export abstract class TypeOrmMysqlRepositoryContract<
     filter: TFilter,
     bypassStoreId: boolean = false
   ): Promise<IItemListModel<TDomainEntity>> {
-    const hasStoreIdColumn = this.hasColumn('storeId')
-
     const query = this.applyPaginator(
       filter,
-      this.customToFindAll(filter, this.repository.createQueryBuilder())
+      this.customToFindAll(this.repository.createQueryBuilder(), filter)
     )
 
-    if (hasStoreIdColumn && !bypassStoreId)
+    if (this.hasColumn('storeId') && !bypassStoreId) {
       query.andWhere(`${this.getTableName()}.store_id = :storeId`, {
         storeId: this.storeId
       })
-
-    return {
-      items: this.dataMapper.toDomainEntityMany(await query.getMany()),
-      total: await query.getCount()
     }
+
+    return this.getMany(query)
   }
 
   public async findOneByPrimaryColumn(
     value: string,
     bypassStoreId: boolean = false
   ): Promise<TDomainEntity> {
-    const hasStoreIdColumn = this.hasColumn('storeId')
-
     const query = this.customToFindOneByPrimaryColumn(
       this.repository
         .createQueryBuilder()
-        .where(
-          `${this.getTableName()}.${this.getPrimaryColumnName()} = :value`,
-          { value }
-        )
+        .where(`${this.getTableName()}.${this.getPrimaryColumnName()} = :value`, { value })
     )
 
-    if (hasStoreIdColumn && !bypassStoreId)
+    if (this.hasColumn('storeId') && !bypassStoreId)
       query.andWhere(`${this.getTableName()}.store_id = :storeId`, {
         storeId: this.storeId
       })
 
-    const result = await query.getOne()
-
-    if (!result) throw this.dataNotFoundException
-
-    return this.dataMapper.toDomainEntity(result)
+    return this.getOne(query)
   }
 
   public applyPaginator(
     filter: IFilterDefault,
     query: SelectQueryBuilder<TDaoEntity>
   ): SelectQueryBuilder<TDaoEntity> {
-    const skip = (this.getPage(filter) - 1) * this.getSize(filter)
-    const size = this.getSize(filter)
-
-    return query.skip(skip).take(size)
+    return query.skip((this.getPage(filter) - 1) * this.getSize(filter)).take(this.getSize(filter))
   }
 
   protected getPage(filter: IFilterDefault) {
-    filter.page =
-      typeof filter.page === 'string' ? parseInt(filter.page) : filter.page
+    filter.page = typeof filter.page === 'string' ? parseInt(filter.page) : filter.page
 
     let page = 1
     if (filter.page > 0) {
-      page =
-        typeof filter.page === 'string' ? parseInt(filter.page) : filter.page
+      page = typeof filter.page === 'string' ? parseInt(filter.page) : filter.page
     }
 
     return page
   }
 
   protected getSize(filter: IFilterDefault) {
-    filter.size =
-      typeof filter.size === 'string' ? parseInt(filter.size) : filter.size
+    filter.size = typeof filter.size === 'string' ? parseInt(filter.size) : filter.size
 
     let size = 15
     if (filter.size > 0) {
@@ -153,8 +123,8 @@ export abstract class TypeOrmMysqlRepositoryContract<
   }
 
   protected customToFindAll(
-    filter: IFilterDefault,
-    query: SelectQueryBuilder<TDaoEntity>
+    query: SelectQueryBuilder<TDaoEntity>,
+    filter?: IFilterDefault
   ): SelectQueryBuilder<TDaoEntity> {
     return query
   }
@@ -166,9 +136,7 @@ export abstract class TypeOrmMysqlRepositoryContract<
   }
 
   protected hasColumn(columnName: string): boolean {
-    return this.repository.metadata.columns
-      .map(column => column.propertyName)
-      .includes(columnName)
+    return this.repository.metadata.columns.map(column => column.propertyName).includes(columnName)
   }
 
   protected hasRelation(propertyName: string): boolean {
@@ -187,5 +155,30 @@ export abstract class TypeOrmMysqlRepositoryContract<
 
   protected getPrimaryColumnValueByEntity(entity: TDomainEntity): string {
     return entity[this.getPrimaryColumnName()]
+  }
+
+  protected async getOne(
+    query: SelectQueryBuilder<TDaoEntity> | FindOneOptions<TDaoEntity>
+  ): Promise<TDomainEntity> {
+    let entity: TDaoEntity
+
+    if (query instanceof SelectQueryBuilder) {
+      entity = await query.getOne()
+    } else {
+      entity = await this.repository.findOne(query)
+    }
+
+    if (!entity) return null
+
+    return this.dataMapper.toDomainEntity(entity)
+  }
+
+  protected async getMany(
+    query: SelectQueryBuilder<TDaoEntity>
+  ): Promise<IItemListModel<TDomainEntity>> {
+    return {
+      items: this.dataMapper.toDomainEntityMany(await query.getMany()),
+      total: await query.getCount()
+    }
   }
 }

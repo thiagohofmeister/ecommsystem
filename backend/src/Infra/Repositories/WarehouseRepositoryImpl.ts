@@ -2,7 +2,6 @@ import { In, SelectQueryBuilder } from 'typeorm'
 
 import { Warehouse } from '../../Domain/Warehouse/Models/Warehouse'
 import { WarehouseRepository } from '../../Domain/Warehouse/Repositories/WarehouseRepository'
-import { IFilterDefault } from '../../Shared/Models/Interfaces/IFilterDefault'
 import { TypeOrmMysqlRepositoryContract } from '../../Shared/Repositories/Contracts/TypeOrmMysqlRepositoryContract'
 import { WarehouseDao } from '../Models/WarehouseDao'
 
@@ -11,15 +10,12 @@ export class WarehouseRepositoryImpl
   implements WarehouseRepository
 {
   async findByIds(ids: string[]): Promise<Warehouse[]> {
-    const warehouses = await this.repository
-      .createQueryBuilder()
-      .where({
-        storeId: this.storeId,
-        id: In(ids)
-      })
-      .getMany()
+    const query = await this.repository.createQueryBuilder().where({
+      storeId: this.storeId,
+      id: In(ids)
+    })
 
-    return this.dataMapper.toDomainEntityMany(warehouses)
+    return (await this.getMany(query)).items
   }
 
   async getNextPriority(): Promise<number> {
@@ -38,24 +34,16 @@ export class WarehouseRepositoryImpl
   }
 
   async findByZipCodeAndNumber(addressZipCode: string, addressNumber: string): Promise<Warehouse> {
-    const warehouse = await this.repository
-      .createQueryBuilder()
-      .where({
-        storeId: this.storeId,
-        addressZipCode,
-        addressNumber
-      })
-      .getOne()
+    const query = await this.repository.createQueryBuilder().where({
+      storeId: this.storeId,
+      addressZipCode,
+      addressNumber
+    })
 
-    if (!warehouse) {
-      throw this.dataNotFoundException
-    }
-
-    return this.dataMapper.toDomainEntity(warehouse)
+    return this.getOne(query)
   }
 
   protected customToFindAll(
-    filter: IFilterDefault,
     query: SelectQueryBuilder<WarehouseDao>
   ): SelectQueryBuilder<WarehouseDao> {
     return query.orderBy('priority', 'ASC')

@@ -7,6 +7,7 @@ import { RedisCollection } from '../../Shared/Models/RedisCollection'
 import { CategoryValidator } from './CategoryValidator'
 import { CategoryCreateDto } from './Dto/CategoryCreateDto'
 import { CategorySaveDto } from './Dto/CategorySaveDto'
+import { CategoryDataNotFound } from './Exceptions/CategoryDataNotFound'
 import { Category } from './Models/Category'
 import { CategoryTree } from './Models/CategoryTree'
 import { CategoryRepository } from './Repositories/CategoryRepository'
@@ -37,7 +38,11 @@ export class CategoryService {
   }
 
   public async getOneById(id: string): Promise<Category> {
-    return this.categoryRepository.findOneByPrimaryColumn(id)
+    const result = this.categoryRepository.findOneByPrimaryColumn(id)
+
+    if (!result) throw new CategoryDataNotFound()
+
+    return result
   }
 
   public async getTree(ignoreCache: boolean = false): Promise<CategoryTree[]> {
@@ -168,7 +173,7 @@ export class CategoryService {
     }
 
     try {
-      return await this.categoryRepository.findOneByPrimaryColumn(id)
+      return await this.getOneById(id)
     } catch (err) {
       if (!(err instanceof DataNotFoundException)) throw err
 

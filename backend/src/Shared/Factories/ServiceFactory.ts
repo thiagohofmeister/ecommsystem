@@ -38,8 +38,8 @@ export class ServiceFactory {
       this.repositoryFactory.buildPriceRepository(manager),
       this.repositoryFactory.buildImageRepository(manager),
       this.repositoryFactory.buildAttributeRepository(manager),
-      this.repositoryFactory.buildBrandRepository(manager),
-      this.repositoryFactory.buildCategoryRepository(manager),
+      this.buildBrandService(manager),
+      this.buildCategoryService(manager),
       this.buildVariationService(manager)
     )
   }

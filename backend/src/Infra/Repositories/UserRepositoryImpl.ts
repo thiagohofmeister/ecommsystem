@@ -10,7 +10,7 @@ export class UserRepositoryImpl
   implements UserRepository
 {
   async findOneByAuthData(login: string, password: string): Promise<User> {
-    const user = await this.repository
+    const query = await this.repository
       .createQueryBuilder()
       .leftJoinAndSelect('UserDao.storesOwned', 'storesOwned')
       .leftJoinAndSelect('UserDao.store', 'store')
@@ -18,23 +18,12 @@ export class UserRepositoryImpl
       .andWhere('UserDao.password = :password', {
         password: this.createHash256(this.createHash256(password))
       })
-      .getOne()
 
-    if (!user) {
-      throw this.dataNotFoundException
-    }
-
-    return this.dataMapper.toDomainEntity(user)
+    return this.getOne(query)
   }
 
   async findOneByDocumentNumber(documentNumber: string): Promise<User> {
-    const user = await this.repository.findOne({ where: { documentNumber } })
-
-    if (!user) {
-      throw this.dataNotFoundException
-    }
-
-    return this.dataMapper.toDomainEntity(user)
+    return this.getOne({ where: { documentNumber } })
   }
 
   private createHash256(str: string): string {

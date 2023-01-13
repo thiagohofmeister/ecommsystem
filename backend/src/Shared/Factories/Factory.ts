@@ -30,10 +30,7 @@ export class Factory {
   }
 
   public buildServiceFactory(storeId: string) {
-    return new ServiceFactory(
-      this.buildRepositoryFactory(storeId),
-      this.buildQueueFactory()
-    )
+    return new ServiceFactory(this.buildRepositoryFactory(storeId), this.buildQueueFactory())
   }
 
   public buildDataMapperFactory() {

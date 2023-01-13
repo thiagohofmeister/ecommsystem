@@ -4,6 +4,7 @@ import { AttributeCreateDto } from './Dto/AttributeCreateDto'
 import { AttributeGetListFilterDto } from './Dto/AttributeGetListFilterDto'
 import { AttributeSaveDto } from './Dto/AttributeSaveDto'
 import { AttributeUpdateDto } from './Dto/AttributeUpdateDto'
+import { AttributeDataNotFound } from './Exceptions/AttributeDataNotFound'
 import { Attribute } from './Models/Attribute'
 import { AttributeRepository } from './Repositories/AttributeRepository'
 
@@ -26,7 +27,11 @@ export class AttributeService {
   }
 
   public async getOneById(id: string): Promise<Attribute> {
-    return this.attributeRepository.findOneByPrimaryColumn(id)
+    const result = await this.attributeRepository.findOneByPrimaryColumn(id)
+
+    if (!result) throw new AttributeDataNotFound()
+
+    return result
   }
 
   public async list(filter: AttributeGetListFilterDto): Promise<IItemListModel<Attribute>> {
