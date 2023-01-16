@@ -1,4 +1,5 @@
-import { Response, NextFunction } from 'express'
+import { NextFunction, Response } from 'express'
+
 import { BadRequestException } from '../Models/Exceptions/BadRequestException'
 import { CoreRequest } from '../Models/Request/CoreRequest'
 

@@ -1,4 +1,3 @@
-import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { IItemListModel } from '../../Shared/Models/Interfaces/IItemListModel'
 import { WarehouseCreateDto } from './Dto/WarehouseCreateDto'
@@ -178,16 +177,9 @@ export class WarehouseService {
   }
 
   private async validateWarehouseAlreadyExists(zipCode: string, number: string) {
-    let exists = false
+    const alreadyExists = !!(await this.warehouseRepository.findByZipCodeAndNumber(zipCode, number))
 
-    try {
-      await this.warehouseRepository.findByZipCodeAndNumber(zipCode, number)
-      exists = true
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) throw e
-    }
-
-    if (exists) throw new WarehouseConflict()
+    if (alreadyExists) throw new WarehouseConflict()
   }
 
   private async getPriority() {

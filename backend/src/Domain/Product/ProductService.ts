@@ -1,10 +1,11 @@
 import { In, Not } from 'typeorm'
 
-import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { AttributeRepository } from '../Attribute/Repositories/AttributeRepository'
 import { BrandService } from '../Brand/BrandService'
+import { BrandDataNotFound } from '../Brand/Exceptions/BrandDataNotFound'
 import { CategoryService } from '../Category/CategoryService'
+import { CategoryDataNotFound } from '../Category/Exceptions/CategoryDataNotFound'
 import { Variation } from '../Variation/Models/Variation'
 import { VariationService } from '../Variation/VariationService'
 import { ProductCreateDto } from './Dto/ProductCreateDto'
@@ -36,7 +37,9 @@ export class ProductService {
   ) {}
 
   public async create(storeId: string, data: ProductCreateDto): Promise<Product> {
-    await this.validateProductAlreadyExists(data.id)
+    if (!!(await this.productRepository.findOneByPrimaryColumn(data.id))) {
+      throw new ProductConflict()
+    }
 
     await this.productValidator.productCreatePayloadValidate(data)
 
@@ -143,17 +146,15 @@ export class ProductService {
     sale: number,
     invalidDataException: InvalidDataException
   ): Promise<Price> {
-    try {
-      const price = await this.priceRepository.findBySkuAndCampaignId(variation.getSku(), null)
+    const price = await this.priceRepository.findBySkuAndCampaignId(variation.getSku(), null)
 
-      price.setList(list).setSale(sale)
-
-      return price
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) throw e
-
+    if (!price) {
       return new Price(storeId, list, sale, null, variation)
     }
+
+    price.setList(list).setSale(sale)
+
+    return price
   }
 
   private async deleteUnusedImages(
@@ -175,8 +176,6 @@ export class ProductService {
     const productToSave = await this.getProductToSaved(product, storeId, data)
 
     await this.validateVariationTemplate(productToSave.getVariationTemplate())
-
-    // TODO: Validate if each attribute exists `data.variations.[].attributes`
 
     const combinations = await this.getVariationCombinations(
       productToSave.getVariationTemplate(),
@@ -321,9 +320,7 @@ export class ProductService {
     images: ProductCreateDto['images'],
     combinations: string[]
   ) {
-    if (!images) {
-      return
-    }
+    if (!images) return
 
     product.removeImages(images.filter(i => !!i.id).map(i => i.id))
 
@@ -378,36 +375,36 @@ export class ProductService {
     variations: ProductCreateDto['variations'],
     isUpdate: boolean
   ) {
-    if (!!variations) {
-      const skusToRemove = product
-        .getVariationSkus()
-        .filter(sku => !variations.map(v => v.sku).includes(sku))
+    if (!variations) return
 
-      await Promise.all(
-        variations.map(async (variation, index) => {
-          if (isUpdate) {
-            return this.variationService.update(
-              product,
-              variation.sku,
-              variation,
-              product.getVariations()?.find(v => v.getSku() === variation.sku),
-              index
-            )
-          }
+    const skusToRemove = product
+      .getVariationSkus()
+      .filter(sku => !variations.map(v => v.sku).includes(sku))
 
-          return this.variationService.create(product, variation.sku, variation, index)
-        })
-      )
+    await Promise.all(
+      variations.map(async (variation, index) => {
+        if (isUpdate) {
+          return this.variationService.update(
+            product,
+            variation.sku,
+            variation,
+            product.getVariations()?.find(v => v.getSku() === variation.sku),
+            index
+          )
+        }
 
-      await this.variationService.delete(product.getId(), product.getStoreId(), skusToRemove)
-    }
+        return this.variationService.create(product, variation.sku, variation, index)
+      })
+    )
+
+    await this.variationService.delete(product.getId(), product.getStoreId(), skusToRemove)
   }
 
   private async getCategory(id: string) {
     try {
       return await this.categoryService.getOneById(id)
-    } catch (err) {
-      if (!(err instanceof DataNotFoundException)) throw err
+    } catch (e) {
+      if (!(e instanceof CategoryDataNotFound)) throw e
 
       throw new InvalidDataException('Invalid data.', [
         {
@@ -421,8 +418,8 @@ export class ProductService {
   private async getBrand(id: string) {
     try {
       return await this.brandService.getOneById(id)
-    } catch (err) {
-      if (!(err instanceof DataNotFoundException)) throw err
+    } catch (e) {
+      if (!(e instanceof BrandDataNotFound)) throw e
 
       throw new InvalidDataException('Invalid data.', [
         {
@@ -431,9 +428,5 @@ export class ProductService {
         }
       ])
     }
-  }
-
-  private async validateProductAlreadyExists(id: string) {
-    if (!!(await this.getOneById(id))) throw new ProductConflict()
   }
 }

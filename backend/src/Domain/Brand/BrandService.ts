@@ -1,6 +1,5 @@
 import { kebabCase } from 'lodash'
 
-import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { IItemListModel } from '../../Shared/Models/Interfaces/IItemListModel'
 import { BrandValidator } from './BrandValidator'
 import { BrandCreateDto } from './Dto/BrandCreateDto'
@@ -71,18 +70,12 @@ export class BrandService {
   private async generateUrn(str: string, brand?: Brand, count: number = 0) {
     const slug = `${kebabCase(str)}${count ? `-${count}` : ''}`
 
-    try {
-      const brandFound = await this.brandRepository.findOneByUrn(slug)
+    const brandFound = await this.brandRepository.findOneByUrn(slug)
 
-      if (brandFound.getId() === brand?.getId()) {
-        return slug
-      }
-
-      return this.generateUrn(str, brand, ++count)
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) throw e
+    if (!brandFound || brandFound.getId() === brand?.getId()) {
+      return slug
     }
 
-    return slug
+    return this.generateUrn(str, brand, ++count)
   }
 }

@@ -1,7 +1,6 @@
 import { kebabCase } from 'lodash'
 
 import { CategoryQueue } from '../../Infra/Queues/CategoryQueue'
-import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { InvalidDataException } from '../../Shared/Models/Exceptions/InvalidDataException'
 import { RedisCollection } from '../../Shared/Models/RedisCollection'
 import { CategoryValidator } from './CategoryValidator'
@@ -38,7 +37,7 @@ export class CategoryService {
   }
 
   public async getOneById(id: string): Promise<Category> {
-    const result = this.categoryRepository.findOneByPrimaryColumn(id)
+    const result = await this.categoryRepository.findOneByPrimaryColumn(id)
 
     if (!result) throw new CategoryDataNotFound()
 
@@ -152,19 +151,13 @@ export class CategoryService {
   private async generateUrn(str: string, category?: Category, count: number = 0) {
     const slug = `${kebabCase(str)}${count ? `-${count}` : ''}`
 
-    try {
-      const categoryFound = await this.categoryRepository.findOneByUrn(slug)
+    const categoryFound = await this.categoryRepository.findOneByUrn(slug)
 
-      if (categoryFound.getId() === category?.getId()) {
-        return slug
-      }
-
-      return this.generateUrn(str, category, ++count)
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) throw e
+    if (!categoryFound || categoryFound.getId() === category?.getId()) {
+      return slug
     }
 
-    return slug
+    return this.generateUrn(str, category, ++count)
   }
 
   private async getParent(id: string) {
@@ -172,17 +165,15 @@ export class CategoryService {
       return null
     }
 
-    try {
-      return await this.getOneById(id)
-    } catch (err) {
-      if (!(err instanceof DataNotFoundException)) throw err
+    const parent = await this.getOneById(id)
 
-      throw new InvalidDataException('Invalid data.', [
-        {
-          id: `parent.id.${id}.notFound`,
-          message: `Field parent.id.${id} not found.`
-        }
-      ])
-    }
+    if (parent) return parent
+
+    throw new InvalidDataException('Invalid data.', [
+      {
+        id: `parent.id.${id}.notFound`,
+        message: `Field parent.id.${id} not found.`
+      }
+    ])
   }
 }

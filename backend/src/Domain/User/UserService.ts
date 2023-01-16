@@ -1,4 +1,3 @@
-import { DataNotFoundException } from '../../Shared/Models/Exceptions/DataNotFoundException'
 import { UnauthorizedException } from '../../Shared/Models/Exceptions/UnauthorizedException'
 import { AuthenticationCreateDto } from '../Authentication/Dto/AuthenticationCreateDto'
 import { UserCreateDto } from './Dto/UserCreateDto'
@@ -22,15 +21,11 @@ export class UserService {
   }
 
   async findOneByAuthData(data: AuthenticationCreateDto) {
-    try {
-      return await this.repository.findOneByAuthData(data.login, data.password)
-    } catch (e) {
-      if (!(e instanceof DataNotFoundException)) {
-        throw e
-      }
+    const user = await this.repository.findOneByAuthData(data.login, data.password)
 
-      throw new UnauthorizedException()
-    }
+    if (user) return user
+
+    throw new UnauthorizedException()
   }
 
   public async create(data: UserCreateDto): Promise<User> {
